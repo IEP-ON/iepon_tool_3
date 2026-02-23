@@ -40,7 +40,7 @@ export function EditorSection() {
           // 2. Tier 2 (Supabase DB 캐시 확인)
           try {
             const { data, error } = await supabase
-              .from('menu_images')
+              .from('tool3_menu_images')
               .select('image_url, source')
               .eq('refined_name', item.refined_name)
               .order('created_at', { ascending: false })
@@ -74,7 +74,7 @@ export function EditorSection() {
   // DB에 생성/검색한 이미지 URL 캐싱
   const saveToDbCache = async (refinedName: string, originalName: string, imageUrl: string, source: string) => {
     try {
-      await supabase.from('menu_images').insert({
+      await supabase.from('tool3_menu_images').insert({
         refined_name: refinedName,
         original_name: originalName,
         image_url: imageUrl,
