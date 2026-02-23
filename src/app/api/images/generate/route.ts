@@ -20,14 +20,14 @@ export async function POST(request: Request) {
       {
         model: 'dall-e-3',
         // 프롬프트 고도화: 캐릭터 배제, 흰 배경, 직관적인 음식 사진 강조
-        prompt: `A highly realistic, appetizing photograph of the food "${prompt}". 
+        prompt: `A highly realistic, appetizing photograph of a single serving of "${prompt}". 
         CRITICAL REQUIREMENTS: 
-        1. The food MUST be the only object in the image.
-        2. NO characters, NO mascots, NO people, NO faces, NO hands.
-        3. Pure solid white background (hex #FFFFFF).
-        4. No bowls, plates, or utensils if possible, just the food itself isolated. If a container is necessary, it must be extremely simple and white.
-        5. No text or watermarks.
-        Make it look like a professional top-down stock photo for a food catalog, perfectly lit.`,
+        1. The food MUST be the ONLY object in the image. Absolutely NO other items, NO side dishes, NO drinks.
+        2. NO characters, NO mascots, NO people, NO faces, NO hands, NO animals.
+        3. Pure solid white background (hex #FFFFFF). NO table, NO shadows, NO environment.
+        4. NO bowls, NO plates, NO utensils, NO chopsticks, NO spoons, NO pots. Just the food itself isolated in the center. If a container is absolutely necessary for liquids, it must be an extremely simple, plain white bowl with no patterns.
+        5. NO text, NO watermarks, NO logos.
+        Make it look like a professional, isolated, top-down stock photo for a food catalog. Very intuitive and simple.`,
         n: 1,
         size: '1024x1024',
         response_format: 'url',

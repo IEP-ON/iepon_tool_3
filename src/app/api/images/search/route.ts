@@ -56,12 +56,14 @@ export async function GET(request: Request) {
 
   try {
     const translatedQuery = translateQuery(query);
-    console.log(`Pixabay Search: Original="${query}" -> Translated="${translatedQuery}"`);
+    // 검색어에 'isolated' 또는 'white background'를 추가하여 누끼 따기 좋은 직관적인 단일 음식 사진을 유도
+    const finalQuery = `${translatedQuery} isolated white background`;
+    console.log(`Pixabay Search: Original="${query}" -> Translated="${translatedQuery}" -> Final="${finalQuery}"`);
 
     const response = await axios.get('https://pixabay.com/api/', {
       params: {
         key: PIXABAY_API_KEY,
-        q: encodeURIComponent(translatedQuery),
+        q: encodeURIComponent(finalQuery),
         image_type: 'photo',
         category: 'food',
         per_page: 15, // 결과 풀을 늘림
