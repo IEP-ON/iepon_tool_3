@@ -139,35 +139,11 @@ export function EditorSection() {
   const handleSelectImage = async (url: string) => {
     if (!activeItem) return;
     
-    toast.info('배경 제거(누끼) 작업 중입니다... 잠시만 기다려주세요.');
-    
-    try {
-      // 1. 브라우저 누끼 라이브러리 호출
-      const { removeImageBackground, blobToUrl } = await import('@/lib/utils/image-processor');
-      const processedBlob = await removeImageBackground(url);
-      
-      if (processedBlob) {
-        const objectUrl = blobToUrl(processedBlob);
-        updateMenuItemImage(activeItem.id, objectUrl, 'tier3_pixabay');
-        toast.success('배경 제거가 완료되어 적용되었습니다!');
-        
-        // Note: Object URL은 DB에 저장할 수 없으므로 실제 운영 시에는 Supabase Storage에 업로드 후 저장해야 합니다.
-        // 현재는 로컬 메모리상에서만 활용
-        setActiveItem(null);
-      } else {
-        // 실패 시 원본 적용
-        updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
-        saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
-        toast.error('배경 제거에 실패하여 원본 이미지를 적용합니다.');
-        setActiveItem(null);
-      }
-    } catch (error) {
-      console.error(error);
-      updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
-      saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
-      toast.error('배경 제거 중 오류가 발생하여 원본 이미지를 적용합니다.');
-      setActiveItem(null);
-    }
+    // 배경 제거(누끼) 작업 삭제 -> 이미지를 원본 그대로 원형 프레이밍하여 사용
+    updateMenuItemImage(activeItem.id, url, 'tier3_naver');
+    saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_naver');
+    toast.success('웹 검색 이미지가 적용되었습니다!');
+    setActiveItem(null);
   };
 
   if (isLoading) {
@@ -253,7 +229,7 @@ export function EditorSection() {
                 <div className="absolute top-2 right-2 flex gap-1">
                   {item.image.source === 'tier1_preset' && <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">기본</span>}
                   {item.image.source === 'tier2_cache' && <span className="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">공유</span>}
-                  {item.image.source === 'tier3_pixabay' && <span className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">검색</span>}
+                  {item.image.source === 'tier3_naver' && <span className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">검색</span>}
                   {item.image.source === 'tier4_openai' && <span className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">AI</span>}
                 </div>
               )}
