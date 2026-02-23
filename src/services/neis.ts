@@ -18,19 +18,28 @@ export const searchSchools = async (query: string): Promise<School[]> => {
     throw new Error('NEIS_API_KEY 환경변수가 설정되지 않았습니다.');
   }
 
-  const response = await axios.get(`${BASE_URL}/schoolInfo`, {
-    params: {
-      KEY: NEIS_API_KEY,
-      Type: 'json',
-      pIndex: 1,
-      pSize: 20,
-      SCHUL_NM: query,
-    },
-  });
+  const params = {
+    KEY: NEIS_API_KEY,
+    Type: 'json',
+    pIndex: 1,
+    pSize: 20,
+    SCHUL_NM: query,
+  };
+  
+  const response = await axios.get(`${BASE_URL}/schoolInfo`, { params });
+  
+  console.log('NEIS schoolInfo response status:', response.status);
+  console.log('NEIS schoolInfo response keys:', JSON.stringify(Object.keys(response.data)));
 
-  if (response.data.schoolInfo && response.data.schoolInfo[1].row) {
+  if (response.data.schoolInfo && response.data.schoolInfo[1]?.row) {
     return response.data.schoolInfo[1].row;
   }
+  
+  // NEIS API 에러 응답 형태 처리
+  if (response.data.RESULT) {
+    console.error('NEIS API error:', JSON.stringify(response.data.RESULT));
+  }
+  
   return [];
 };
 
