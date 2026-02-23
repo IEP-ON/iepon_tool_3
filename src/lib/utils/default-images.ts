@@ -9,6 +9,7 @@ export const defaultImageMap: Record<string, string> = {
   '차수수밥': '/assets/default-images/rice.png',
   '백미밥': '/assets/default-images/rice.png',
   '수수밥': '/assets/default-images/rice.png',
+  '밥': '/assets/default-images/rice.png',
   
   // 김치류
   '배추김치': '/assets/default-images/kimchi.png',
@@ -16,6 +17,7 @@ export const defaultImageMap: Record<string, string> = {
   '총각김치': '/assets/default-images/kimchi.png',
   '보쌈김치': '/assets/default-images/kimchi.png',
   '열무김치': '/assets/default-images/kimchi.png',
+  '김치': '/assets/default-images/kimchi.png',
   
   // 국류
   '미역국': '/assets/default-images/soup.png',
@@ -27,6 +29,8 @@ export const defaultImageMap: Record<string, string> = {
   '시금치된장국': '/assets/default-images/soup.png',
   '배추된장국': '/assets/default-images/soup.png',
   '아욱된장국': '/assets/default-images/soup.png',
+  '국': '/assets/default-images/soup.png',
+  '찌개': '/assets/default-images/soup.png',
   
   // 우유/간식류
   '우유': '/assets/default-images/milk.png',
