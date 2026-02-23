@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { RefreshCw, Search, Sparkles, Upload, Loader2 } from 'lucide-react';
 import { getDefaultImage } from '@/lib/utils/default-images';
 import { MenuItem } from '@/types/database';
+import { supabase } from '@/lib/supabase/client';
 
 export function EditorSection() {
   const { menuItems, updateMenuItemImage, isLoading, showTracingText, toggleTracingText } = useMenuStore();
@@ -24,7 +25,7 @@ export function EditorSection() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchResults, setSearchResults] = useState<string[]>([]);
   
-  // 자동 이미지 로딩 (Tier 1 -> API 등)
+  // 자동 이미지 로딩 (Tier 1 -> Tier 2 DB 캐시 -> 수동)
   useEffect(() => {
     const loadMissingImages = async () => {
       for (const item of menuItems) {
@@ -36,8 +37,23 @@ export function EditorSection() {
             continue;
           }
           
-          // (차후) 2. Tier 2 (DB 캐시)
-          // (차후) 3. Tier 3 (Pixabay 검색 + 브라우저 누끼) 자동 실행
+          // 2. Tier 2 (Supabase DB 캐시 확인)
+          try {
+            const { data, error } = await supabase
+              .from('menu_images')
+              .select('image_url, source')
+              .eq('refined_name', item.refined_name)
+              .order('created_at', { ascending: false })
+              .limit(1);
+              
+            if (!error && data && data.length > 0) {
+              updateMenuItemImage(item.id, data[0].image_url, 'tier2_cache');
+            }
+          } catch (e) {
+            console.error('Failed to fetch from DB cache:', e);
+          }
+          
+          // Tier 3 (Pixabay 검색 + 브라우저 누끼)는 사용자가 직접 '교체하기'를 눌러서 실행하도록 유도 (API 요금 및 성능 고려)
         }
       }
     };
@@ -54,6 +70,20 @@ export function EditorSection() {
       setSearchResults([]);
     }
   }, [activeItem]);
+
+  // DB에 생성/검색한 이미지 URL 캐싱
+  const saveToDbCache = async (refinedName: string, originalName: string, imageUrl: string, source: string) => {
+    try {
+      await supabase.from('menu_images').insert({
+        refined_name: refinedName,
+        original_name: originalName,
+        image_url: imageUrl,
+        source: source
+      });
+    } catch (e) {
+      console.error('Failed to save to DB cache:', e);
+    }
+  };
 
   const handleSearchPixabay = async () => {
     if (!searchQuery.trim() || !activeItem) return;
@@ -93,6 +123,7 @@ export function EditorSection() {
       if (data.url) {
         // AI로 생성된 이미지는 이미 누끼(흰배경) 처리가 되어있으므로 바로 적용
         updateMenuItemImage(activeItem.id, data.url, 'tier4_openai');
+        saveToDbCache(activeItem.refined_name, activeItem.original_name, data.url, 'tier4_openai');
         toast.success('AI 이미지가 성공적으로 생성되었습니다!');
         setActiveItem(null);
       } else {
@@ -119,16 +150,21 @@ export function EditorSection() {
         const objectUrl = blobToUrl(processedBlob);
         updateMenuItemImage(activeItem.id, objectUrl, 'tier3_pixabay');
         toast.success('배경 제거가 완료되어 적용되었습니다!');
+        
+        // Note: Object URL은 DB에 저장할 수 없으므로 실제 운영 시에는 Supabase Storage에 업로드 후 저장해야 합니다.
+        // 현재는 로컬 메모리상에서만 활용
         setActiveItem(null);
       } else {
         // 실패 시 원본 적용
         updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
+        saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
         toast.error('배경 제거에 실패하여 원본 이미지를 적용합니다.');
         setActiveItem(null);
       }
     } catch (error) {
       console.error(error);
       updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
+      saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
       toast.error('배경 제거 중 오류가 발생하여 원본 이미지를 적용합니다.');
       setActiveItem(null);
     }
@@ -216,6 +252,8 @@ export function EditorSection() {
               {item.image && (
                 <div className="absolute top-2 right-2 flex gap-1">
                   {item.image.source === 'tier1_preset' && <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">기본</span>}
+                  {item.image.source === 'tier2_cache' && <span className="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">공유</span>}
+                  {item.image.source === 'tier3_pixabay' && <span className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">검색</span>}
                   {item.image.source === 'tier4_openai' && <span className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">AI</span>}
                 </div>
               )}
