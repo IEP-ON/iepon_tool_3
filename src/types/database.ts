@@ -20,4 +20,5 @@ export type MenuItem = {
   original_name: string;
   refined_name: string;
   image?: MenuImage;
+  isHidden?: boolean; // 사용자가 출력에서 제외했는지 여부
 };

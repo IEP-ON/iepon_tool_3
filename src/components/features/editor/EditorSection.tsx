@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMenuStore } from '@/store/useMenuStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,13 +10,13 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { RefreshCw, Search, Sparkles, Upload, Loader2 } from 'lucide-react';
+import { RefreshCw, Search, Sparkles, Loader2, Eye, EyeOff } from 'lucide-react';
 import { getDefaultImage } from '@/lib/utils/default-images';
 import { MenuItem } from '@/types/database';
 import { supabase } from '@/lib/supabase/client';
 
 export function EditorSection() {
-  const { menuItems, updateMenuItemImage, isLoading, showTracingText, toggleTracingText } = useMenuStore();
+  const { menuItems, updateMenuItemImage, isLoading, showTracingText, toggleTracingText, toggleMenuItemVisibility, updateMenuItemName } = useMenuStore();
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
   
   // Dialog States
@@ -24,6 +24,11 @@ export function EditorSection() {
   const [isSearching, setIsSearching] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchResults, setSearchResults] = useState<string[]>([]);
+
+  // Editing Name State
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   
   // 자동 이미지 로딩 (Tier 1 -> Tier 2 DB 캐시 -> 수동)
   useEffect(() => {
@@ -52,8 +57,6 @@ export function EditorSection() {
           } catch (e) {
             console.error('Failed to fetch from DB cache:', e);
           }
-          
-          // Tier 3 (Pixabay 검색 + 브라우저 누끼)는 사용자가 직접 '교체하기'를 눌러서 실행하도록 유도 (API 요금 및 성능 고려)
         }
       }
     };
@@ -70,6 +73,20 @@ export function EditorSection() {
       setSearchResults([]);
     }
   }, [activeItem]);
+
+  // 이름 수정 모드 진입 시 포커스
+  useEffect(() => {
+    if (editingItemId && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editingItemId]);
+
+  const handleNameEditSave = (id: string) => {
+    if (editingName.trim()) {
+      updateMenuItemName(id, editingName.trim());
+    }
+    setEditingItemId(null);
+  };
 
   // DB에 생성/검색한 이미지 URL 캐싱
   const saveToDbCache = async (refinedName: string, originalName: string, imageUrl: string, source: string) => {
@@ -121,7 +138,6 @@ export function EditorSection() {
       const data = await res.json();
       
       if (data.url) {
-        // AI로 생성된 이미지는 이미 누끼(흰배경) 처리가 되어있으므로 바로 적용
         updateMenuItemImage(activeItem.id, data.url, 'tier4_openai');
         saveToDbCache(activeItem.refined_name, activeItem.original_name, data.url, 'tier4_openai');
         toast.success('AI 이미지가 성공적으로 생성되었습니다!');
@@ -139,7 +155,6 @@ export function EditorSection() {
   const handleSelectImage = async (url: string) => {
     if (!activeItem) return;
     
-    // 배경 제거(누끼) 작업 삭제 -> 이미지를 원본 그대로 원형 프레이밍하여 사용
     updateMenuItemImage(activeItem.id, url, 'tier3_naver');
     saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_naver');
     toast.success('웹 검색 이미지가 적용되었습니다!');
@@ -179,7 +194,7 @@ export function EditorSection() {
             onCheckedChange={toggleTracingText}
           />
           <Label htmlFor="tracing-mode" className="cursor-pointer font-medium text-sm">
-            따라쓰기 (회색 점선 글씨) 켜기
+            따라쓰기 (2페이지 분리) 켜기
           </Label>
         </div>
       </CardHeader>
@@ -187,12 +202,42 @@ export function EditorSection() {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {menuItems.map((item) => (
-            <div key={item.id} className="border rounded-lg p-3 flex flex-col items-center gap-2 hover:border-slate-400 transition-colors bg-white shadow-sm relative group">
-              <div className="text-center w-full truncate font-semibold" title={item.original_name}>
-                {item.refined_name}
-              </div>
-              <div className="text-[10px] text-slate-400 truncate w-full text-center" title={item.original_name}>
-                {item.original_name}
+            <div 
+              key={item.id} 
+              className={`border rounded-lg p-3 flex flex-col items-center gap-2 hover:border-slate-400 transition-colors bg-white shadow-sm relative group ${item.isHidden ? 'opacity-40 grayscale-[50%]' : ''}`}
+            >
+              {/* 눈 아이콘 (숨김/보임 토글) */}
+              <button
+                onClick={() => toggleMenuItemVisibility(item.id)}
+                className="absolute -top-3 -right-3 bg-white border border-slate-200 shadow-sm p-1.5 rounded-full text-slate-500 hover:text-slate-800 z-10 transition-colors"
+                title={item.isHidden ? "인쇄 포함하기" : "인쇄에서 제외하기"}
+              >
+                {item.isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+
+              {/* 메뉴 이름 (클릭 시 수정) */}
+              <div className="w-full h-8 flex items-center justify-center">
+                {editingItemId === item.id ? (
+                  <Input 
+                    ref={inputRef}
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onBlur={() => handleNameEditSave(item.id)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleNameEditSave(item.id)}
+                    className="h-7 text-sm text-center font-semibold px-1"
+                  />
+                ) : (
+                  <div 
+                    className="text-center w-full truncate font-semibold cursor-text hover:bg-slate-100 rounded px-1 py-0.5 transition-colors" 
+                    title="클릭하여 이름 수정"
+                    onClick={() => {
+                      setEditingName(item.refined_name);
+                      setEditingItemId(item.id);
+                    }}
+                  >
+                    {item.refined_name}
+                  </div>
+                )}
               </div>
               
               <div className="w-full aspect-square bg-slate-50 rounded-md flex items-center justify-center overflow-hidden border border-dashed relative">
@@ -204,9 +249,9 @@ export function EditorSection() {
                     className="w-full h-full object-contain p-2"
                   />
                 ) : (
-                  <div className="flex flex-col items-center text-slate-300">
-                    <Search className="w-6 h-6 mb-1 opacity-50" />
-                    <span className="text-xs font-medium">이미지 없음</span>
+                  <div className="flex flex-col items-center text-slate-400">
+                    <Search className="w-6 h-6 mb-1 opacity-60" />
+                    <span className="text-xs font-bold">검색</span>
                   </div>
                 )}
                 
@@ -223,16 +268,6 @@ export function EditorSection() {
                   </Button>
                 </div>
               </div>
-              
-              {/* 이미지 소스 뱃지 */}
-              {item.image && (
-                <div className="absolute top-2 right-2 flex gap-1">
-                  {item.image.source === 'tier1_preset' && <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">기본</span>}
-                  {item.image.source === 'tier2_cache' && <span className="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">공유</span>}
-                  {item.image.source === 'tier3_naver' && <span className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">검색</span>}
-                  {item.image.source === 'tier4_openai' && <span className="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-sm font-bold">AI</span>}
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -273,7 +308,7 @@ export function EditorSection() {
             <div className="min-h-[200px] border-2 border-dashed rounded-lg bg-slate-50 p-4">
               {searchResults.length > 0 ? (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-slate-700">웹 검색 결과 (클릭 시 자동 누끼 적용)</h4>
+                  <h4 className="text-sm font-medium text-slate-700">웹 검색 결과</h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     {searchResults.map((url, idx) => (
                       <div 

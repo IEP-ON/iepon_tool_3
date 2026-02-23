@@ -20,6 +20,8 @@ interface MenuState {
   setDate: (date: Date) => void;
   setMenuItems: (items: MenuItem[]) => void;
   updateMenuItemImage: (itemId: string, imageUrl: string, source: any) => void;
+  toggleMenuItemVisibility: (itemId: string) => void;
+  updateMenuItemName: (itemId: string, newName: string) => void;
   setLoading: (loading: boolean) => void;
   toggleTracingText: () => void;
 }
@@ -56,6 +58,24 @@ export const useMenuStore = create<MenuState>((set) => ({
                 updated_at: new Date().toISOString()
               } 
             }
+          : item
+      )
+    })),
+
+  toggleMenuItemVisibility: (itemId) =>
+    set((state) => ({
+      menuItems: state.menuItems.map(item =>
+        item.id === itemId
+          ? { ...item, isHidden: !item.isHidden }
+          : item
+      )
+    })),
+
+  updateMenuItemName: (itemId, newName) =>
+    set((state) => ({
+      menuItems: state.menuItems.map(item =>
+        item.id === itemId
+          ? { ...item, refined_name: newName }
           : item
       )
     })),
