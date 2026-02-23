@@ -1,148 +1,82 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useMenuStore } from '@/store/useMenuStore';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { MenuItem } from '@/types/database';
-
-interface CategorizedMenu {
-  rice: MenuItem | null;
-  soup: MenuItem | null;
-  sides: MenuItem[];
-  snacks: MenuItem[];
-}
-
-function categorizeMenuItems(items: MenuItem[]): CategorizedMenu {
-  const result: CategorizedMenu = { rice: null, soup: null, sides: [], snacks: [] };
-  
-  for (const item of items) {
-    const name = item.refined_name;
-    if (!result.rice && /밥/.test(name)) {
-      result.rice = item;
-    } else if (!result.soup && /국|찌개|전골|탕|스프/.test(name)) {
-      result.soup = item;
-    } else if (/우유|요구르트|주스|과일|귤|사과|배$|바나나|단감|딸기|수박|포도|감귤|요플레/.test(name)) {
-      result.snacks.push(item);
-    } else {
-      result.sides.push(item);
-    }
-  }
-  return result;
-}
-
-function TrayCell({ item, label }: { item: MenuItem | null; label: string }) {
-  return (
-    <div className="print-tray-cell">
-      {item?.image ? (
-        <div className="print-tray-cell-inner">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={item.image.image_url} alt={item.refined_name} className="print-tray-img" />
-          <span className="print-tray-label">{item.refined_name}</span>
-        </div>
-      ) : item ? (
-        <div className="print-tray-cell-inner">
-          <span className="print-tray-placeholder-name">{item.refined_name}</span>
-        </div>
-      ) : (
-        <span className="print-tray-placeholder">{label}</span>
-      )}
-    </div>
-  );
-}
 
 export function PrintLayout() {
   const { schoolName, selectedDate, menuItems, showTracingText } = useMenuStore();
 
-  const categorized = useMemo(() => categorizeMenuItems(menuItems), [menuItems]);
-
   if (menuItems.length === 0) return null;
 
-  const sideDishes = categorized.sides.slice(0, 3);
-  while (sideDishes.length < 3) sideDishes.push(null as unknown as MenuItem);
-
   return (
-    <div className="print-page">
-      {/* ===== 상단: 식판 영역 ===== */}
-      <div className="print-top">
-        <h1 className="print-title">
-          {schoolName} 오늘의 급식
+    <div className="print-container hidden print:block bg-white w-full h-[297mm] mx-auto p-8 relative">
+      {/* 1. 상단/좌측: 급식판 영역 */}
+      <div className="h-[45%] w-full border-b-2 border-dashed border-slate-300 pb-8 relative">
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          {schoolName} 오늘의 급식 ({format(selectedDate, 'yyyy년 M월 d일 (E)', { locale: ko })})
         </h1>
-        <p className="print-date">
-          {format(selectedDate, 'yyyy년 M월 d일 (EEEE)', { locale: ko })}
-        </p>
+        
+        {/* 식판 (간단한 CSS 드로잉 또는 이미지 에셋) */}
+        <div className="w-[80%] mx-auto h-[70%] border-4 border-slate-800 rounded-3xl p-4 grid grid-cols-3 grid-rows-2 gap-4 bg-slate-50">
+          {/* 반찬칸 (위 3개) */}
+          <div className="border-2 border-slate-300 rounded-xl bg-white flex items-center justify-center text-slate-300 font-medium text-lg">반찬</div>
+          <div className="border-2 border-slate-300 rounded-xl bg-white flex items-center justify-center text-slate-300 font-medium text-lg">반찬</div>
+          <div className="border-2 border-slate-300 rounded-xl bg-white flex items-center justify-center text-slate-300 font-medium text-lg">반찬</div>
+          
+          {/* 밥, 국칸 (아래 2개 - 더 넓게) */}
+          <div className="col-span-1 border-2 border-slate-300 rounded-xl bg-white flex items-center justify-center text-slate-300 font-medium text-xl">밥</div>
+          <div className="col-span-2 border-2 border-slate-300 rounded-xl bg-white flex items-center justify-center text-slate-300 font-medium text-xl">국 / 찌개</div>
+        </div>
 
-        <div className="print-tray-wrapper">
-          {/* 5칸 식판 */}
-          <div className="print-tray">
-            {/* 위쪽 반찬 3칸 */}
-            <div className="print-tray-row-top">
-              {sideDishes.map((item, idx) => (
-                <TrayCell key={idx} item={item} label={`반찬 ${idx + 1}`} />
-              ))}
-            </div>
-            {/* 아래쪽 밥 + 국 */}
-            <div className="print-tray-row-bottom">
-              <TrayCell item={categorized.rice} label="밥" />
-              <div className="print-tray-cell-wide">
-                <TrayCell item={categorized.soup} label="국 / 찌개" />
-              </div>
-            </div>
-          </div>
-
-          {/* 간식/우유 영역 (식판 오른쪽) */}
-          {categorized.snacks.length > 0 && (
-            <div className="print-snack-area">
-              {categorized.snacks.map((snack) => (
-                <div key={snack.id} className="print-snack-item">
-                  {snack.image ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={snack.image.image_url} alt={snack.refined_name} className="print-snack-img" />
-                      <span className="print-snack-label">{snack.refined_name}</span>
-                    </>
-                  ) : (
-                    <span className="print-snack-label">{snack.refined_name}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+        {/* 간식/우유 (식판 옆) */}
+        <div className="absolute top-1/2 right-4 -translate-y-1/2 w-24 h-24 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-sm text-slate-400 text-center">
+          간식<br/>우유
         </div>
       </div>
 
-      {/* ===== 절취선 ===== */}
-      <div className="print-cut-line">
-        <span>✂ 여기를 잘라주세요 ✂</span>
+      {/* 절취선 표시 */}
+      <div className="absolute top-[48%] left-0 w-full flex items-center justify-center text-slate-400">
+        <span className="bg-white px-4 text-sm">✂️ 여기를 잘라주세요 ✂️</span>
       </div>
 
-      {/* ===== 하단: 스티커 + 따라쓰기 ===== */}
-      <div className="print-bottom">
-        <h2 className="print-subtitle">급식 스티커 &amp; 따라 쓰기</h2>
-
-        <div className="print-sticker-grid">
+      {/* 2. 하단/우측: 오려 붙일 스티커 & 경필칸 영역 */}
+      <div className="h-[45%] w-full pt-12">
+        <h2 className="text-xl font-bold mb-6 text-center">급식 스티커 & 따라 쓰기</h2>
+        
+        <div className="grid grid-cols-3 gap-8">
           {menuItems.map((item) => (
-            <div key={item.id} className="print-sticker-item">
-              {/* 원형 스티커 (자르기용 점선) */}
-              <div className="print-sticker-circle">
+            <div key={item.id} className="flex flex-col items-center gap-4">
+              {/* 이미지 영역 (가위로 자르기 쉽게 점선 테두리) */}
+              <div className="w-32 h-32 border-2 border-dashed border-slate-400 rounded-full flex items-center justify-center p-2 relative overflow-hidden">
                 {item.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.image.image_url} alt={item.refined_name} className="print-sticker-img" />
+                  <img 
+                    src={item.image.image_url} 
+                    alt={item.refined_name} 
+                    className="w-full h-full object-contain"
+                  />
                 ) : (
-                  <span className="print-sticker-empty">{item.refined_name}</span>
+                  <span className="text-slate-300 text-sm">이미지 없음</span>
                 )}
-                <span className="print-scissors">✂</span>
+                {/* 자르기 가이드 가위 아이콘 */}
+                <span className="absolute -top-1 -right-1 text-sm bg-white">✂️</span>
               </div>
 
-              {/* 따라쓰기 칸 */}
-              <div className="print-writing-box">
-                <div className="print-writing-guides">
-                  <div className="print-guide-h"></div>
-                  <div className="print-guide-v"></div>
+              {/* 경필칸 (따라쓰기 영역) */}
+              <div className="w-full h-12 border-2 border-slate-300 flex items-center justify-center relative bg-white">
+                {/* 십자 유도선 */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+                  <div className="w-full h-[1px] bg-slate-400 border-dashed border-t"></div>
+                  <div className="absolute h-full w-[1px] bg-slate-400 border-dashed border-l"></div>
                 </div>
-                {showTracingText && (
-                  <span className="print-tracing-text">{item.refined_name}</span>
-                )}
+                
+                {/* 텍스트 (옵션에 따라 회색 덧쓰기용 또는 빈칸) */}
+                {showTracingText ? (
+                  <span className="font-bold text-2xl tracking-[0.5em] text-slate-200 z-10" style={{ fontFamily: 'sans-serif' }}>
+                    {item.refined_name}
+                  </span>
+                ) : null}
               </div>
             </div>
           ))}

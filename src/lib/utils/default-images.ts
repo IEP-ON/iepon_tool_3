@@ -1,38 +1,5 @@
 export const defaultImageMap: Record<string, string> = {
-  // 밥류
-  '현미밥': '/assets/default-images/rice.png',
-  '보리밥': '/assets/default-images/rice.png',
-  '흑미밥': '/assets/default-images/rice.png',
-  '기장밥': '/assets/default-images/rice.png',
-  '혼합잡곡밥': '/assets/default-images/rice.png',
-  '귀리밥': '/assets/default-images/rice.png',
-  '차수수밥': '/assets/default-images/rice.png',
-  '백미밥': '/assets/default-images/rice.png',
-  '수수밥': '/assets/default-images/rice.png',
-  '밥': '/assets/default-images/rice.png',
-  
-  // 김치류
-  '배추김치': '/assets/default-images/kimchi.png',
-  '깍두기': '/assets/default-images/kimchi.png',
-  '총각김치': '/assets/default-images/kimchi.png',
-  '보쌈김치': '/assets/default-images/kimchi.png',
-  '열무김치': '/assets/default-images/kimchi.png',
-  '김치': '/assets/default-images/kimchi.png',
-  
-  // 국류
-  '미역국': '/assets/default-images/soup.png',
-  '된장국': '/assets/default-images/soup.png',
-  '어묵국': '/assets/default-images/soup.png',
-  '무국': '/assets/default-images/soup.png',
-  '계란국': '/assets/default-images/soup.png',
-  '만둣국': '/assets/default-images/soup.png',
-  '시금치된장국': '/assets/default-images/soup.png',
-  '배추된장국': '/assets/default-images/soup.png',
-  '아욱된장국': '/assets/default-images/soup.png',
-  '국': '/assets/default-images/soup.png',
-  '찌개': '/assets/default-images/soup.png',
-  
-  // 우유/간식류
+  // 정확히 일치하는 경우를 위한 맵
   '우유': '/assets/default-images/milk.png',
   '요구르트': '/assets/default-images/yogurt.png',
   '사과': '/assets/default-images/apple.png',
@@ -46,17 +13,31 @@ export const defaultImageMap: Record<string, string> = {
  * 정제된 메뉴명으로 기본(로컬) 에셋 이미지가 있는지 확인합니다.
  */
 export function getDefaultImage(refinedName: string): string | null {
-  // 정확히 일치하는 경우
+  // 1. 정확히 일치하는 경우
   if (defaultImageMap[refinedName]) {
     return defaultImageMap[refinedName];
   }
   
-  // 부분 일치하는 경우 (예: '쇠고기미역국' -> '미역국' 매칭)
-  for (const [key, value] of Object.entries(defaultImageMap)) {
-    if (refinedName.includes(key)) {
-      return value;
-    }
+  // 2. 자주 쓰이는 접미사/키워드 매칭 (끝자리나 포함 단어로 판단)
+  const name = refinedName;
+  
+  if (name.endsWith('밥') || name.includes('볶음밥') || name.includes('덮밥')) {
+    return '/assets/default-images/rice.png';
   }
+  
+  if (name.endsWith('국') || name.endsWith('탕') || name.endsWith('찌개') || name.endsWith('전골')) {
+    return '/assets/default-images/soup.png';
+  }
+  
+  if (name.includes('김치') || name.endsWith('두기') || name.includes('석박지')) {
+    return '/assets/default-images/kimchi.png';
+  }
+
+  // 과일/디저트류 폴백
+  if (name.includes('사과')) return '/assets/default-images/apple.png';
+  if (name.includes('토마토')) return '/assets/default-images/tomato.png';
+  if (name.includes('바나나')) return '/assets/default-images/banana.png';
+  if (name.includes('우유')) return '/assets/default-images/milk.png';
   
   return null;
 }
