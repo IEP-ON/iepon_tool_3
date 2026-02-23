@@ -13,31 +13,36 @@ export function PrintLayout() {
   if (visibleItems.length === 0) return null;
 
   return (
-    <div className="print-container hidden print:block bg-white w-full max-w-[210mm] mx-auto box-border">
+    // 페이지별 컨테이너를 따로 두어 겹침 완전 방지
+    <div className="print-container hidden print:block bg-white w-full mx-auto">
       
       {/* ================= 1페이지 (급식판 + 스티커) ================= */}
-      <div className="w-[210mm] h-[290mm] mx-auto p-6 relative overflow-hidden flex flex-col">
-        {/* 1. 상단: 급식판 영역 (더 크고 꽉 차게) */}
-        <div className="h-[45%] w-full border-b-2 border-dashed border-slate-300 pb-4 relative flex flex-col items-center justify-center">
+      {/* 강제 페이지 넘김 스타일 적용 (브라우저 호환성) */}
+      <div 
+        className="w-[210mm] h-[290mm] mx-auto p-6 relative overflow-hidden flex flex-col box-border"
+        style={{ pageBreakAfter: 'always', breakAfter: 'page' }}
+      >
+        {/* 1. 상단: 급식판 영역 (높이를 56%로 늘려 더 꽉 차게) */}
+        <div className="h-[56%] w-full border-b-2 border-dashed border-slate-300 pb-4 relative flex flex-col items-center justify-center">
           <h1 className="text-3xl font-black text-slate-700 mb-6 text-center tracking-tight">
             {schoolName} 오늘의 급식 <span className="text-xl font-bold text-slate-500 ml-2">({format(selectedDate, 'yyyy년 M월 d일', { locale: ko })})</span>
           </h1>
           
-          {/* 더 크고 꽉 찬 급식판 디자인 */}
+          {/* 급식판 디자인: 높이를 320px -> 400px 로 대폭 확대 */}
           <div 
-            className="w-full max-w-[850px] h-[260px] rounded-[50px] p-6 flex flex-col gap-5 relative bg-[#f1f5f9] border-2 border-white"
+            className="w-full max-w-[850px] h-[400px] rounded-[50px] p-6 flex flex-col gap-6 relative bg-[#f1f5f9] border-2 border-white"
             style={{
               boxShadow: '12px 12px 24px rgba(166, 180, 200, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9)'
             }}
           >
-            {/* 반찬칸 3개 (상단) */}
+            {/* 반찬칸 3개 (상단) - 비율 유지 */}
             <div className="flex h-[45%] gap-5 px-3">
               {[1, 2, 3].map((i) => (
                 <div 
                   key={i} 
-                  className="flex-1 rounded-[35px] flex items-center justify-center text-slate-400 font-bold text-xl bg-[#e2e8f0]"
+                  className="flex-1 rounded-[35px] flex items-center justify-center text-slate-400 font-bold text-2xl bg-[#e2e8f0]"
                   style={{
-                    boxShadow: 'inset 6px 6px 12px rgba(166, 180, 200, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.9)'
+                    boxShadow: 'inset 6px 6px 12px rgba(166, 180, 200, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.9)'
                   }}
                 >
                   반찬
@@ -48,17 +53,17 @@ export function PrintLayout() {
             {/* 밥, 국칸 2개 (하단) */}
             <div className="flex h-[55%] gap-8 px-5">
               <div 
-                className="flex-[4] rounded-[40px] flex items-center justify-center text-slate-400 font-bold text-3xl bg-[#e2e8f0]"
+                className="flex-[4] rounded-[40px] flex items-center justify-center text-slate-400 font-bold text-4xl bg-[#e2e8f0]"
                 style={{
-                  boxShadow: 'inset 8px 8px 16px rgba(166, 180, 200, 0.5), inset -8px -8px 16px rgba(255, 255, 255, 0.9)'
+                  boxShadow: 'inset 8px 8px 16px rgba(166, 180, 200, 0.5), -8px -8px 16px rgba(255, 255, 255, 0.9)'
                 }}
               >
                 밥
               </div>
               <div 
-                className="flex-[5] rounded-[40px] flex items-center justify-center text-slate-400 font-bold text-3xl bg-[#e2e8f0]"
+                className="flex-[5] rounded-[40px] flex items-center justify-center text-slate-400 font-bold text-4xl bg-[#e2e8f0]"
                 style={{
-                  boxShadow: 'inset 8px 8px 16px rgba(166, 180, 200, 0.5), inset -8px -8px 16px rgba(255, 255, 255, 0.9)'
+                  boxShadow: 'inset 8px 8px 16px rgba(166, 180, 200, 0.5), -8px -8px 16px rgba(255, 255, 255, 0.9)'
                 }}
               >
                 국 / 찌개
@@ -66,9 +71,9 @@ export function PrintLayout() {
             </div>
           </div>
 
-          {/* 간식/우유 칸 */}
+          {/* 간식/우유 칸 (더 크게 확대) */}
           <div 
-            className="absolute top-1/2 right-2 -translate-y-1/2 w-24 h-24 rounded-[25px] flex flex-col items-center justify-center text-base text-slate-500 font-bold bg-[#f1f5f9] border-2 border-white"
+            className="absolute top-1/2 right-2 -translate-y-1/2 w-32 h-32 rounded-[30px] flex flex-col items-center justify-center text-xl text-slate-500 font-bold bg-[#f1f5f9] border-2 border-white"
             style={{
               boxShadow: '8px 8px 16px rgba(166, 180, 200, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.9)'
             }}
@@ -78,8 +83,8 @@ export function PrintLayout() {
           </div>
         </div>
 
-        {/* 절취선 표시 */}
-        <div className="absolute top-[46.5%] left-0 w-full flex items-center justify-center text-slate-400">
+        {/* 절취선 위치 조정 (상단 영역이 커졌으므로 57.5%로 내림) */}
+        <div className="absolute top-[57.5%] left-0 w-full flex items-center justify-center text-slate-400">
           <div className="w-full border-t-[3px] border-dashed border-slate-300 absolute"></div>
           <span className="bg-white px-4 text-base font-bold relative z-10 flex items-center gap-2 text-slate-500 rounded-full">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
@@ -87,13 +92,13 @@ export function PrintLayout() {
           </span>
         </div>
 
-        {/* 2. 하단: 오려 붙일 스티커 (경필쓰기 없음) */}
-        <div className="h-[53%] w-full pt-8 flex flex-col">
-          <h2 className="text-2xl font-black mb-6 text-center text-slate-700 bg-slate-100 py-3 rounded-full mx-auto w-[60%]">
+        {/* 2. 하단: 오려 붙일 스티커 (상단이 커졌으므로 42%로 축소) */}
+        <div className="h-[42%] w-full pt-8 flex flex-col">
+          <h2 className="text-2xl font-black mb-4 text-center text-slate-700 bg-slate-100 py-3 rounded-full mx-auto w-[60%]">
             오늘의 메뉴 스티커
           </h2>
           
-          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-10 px-4 content-start flex-1`}>
+          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-6 px-4 content-start flex-1 overflow-hidden`}>
             {visibleItems.map((item) => (
               <div key={item.id} className="flex flex-col items-center">
                 {/* 원형 스티커 영역 */}
@@ -123,8 +128,8 @@ export function PrintLayout() {
                     ✂️
                   </div>
                 </div>
-                {/* 하단 여백 및 가이드용 이름 (오리기 편하도록 작게) */}
-                <div className="mt-3 text-sm font-bold text-slate-500">
+                {/* 하단 여백 및 가이드용 이름 */}
+                <div className="mt-2 text-sm font-bold text-slate-500">
                   {item.refined_name}
                 </div>
               </div>
@@ -135,7 +140,10 @@ export function PrintLayout() {
 
       {/* ================= 2페이지 (경필쓰기 3회 반복) ================= */}
       {showTracingText && (
-        <div className="w-[210mm] min-h-[290mm] mx-auto p-10 relative box-border break-before-page flex flex-col">
+        <div 
+          className="w-[210mm] min-h-[297mm] mx-auto p-10 relative box-border flex flex-col"
+          style={{ pageBreakBefore: 'always', breakBefore: 'page' }}
+        >
           <h1 className="text-3xl font-black text-slate-700 mb-10 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto">
             오늘의 메뉴 따라 쓰기
           </h1>
