@@ -13,35 +13,25 @@ export interface School {
 
 export const searchSchools = async (query: string): Promise<School[]> => {
   if (!query) return [];
-  try {
-    console.log(`[NEIS API] Searching schools with query: ${query}, API Key exists: ${!!NEIS_API_KEY}`);
-    
-    const response = await axios.get(`${BASE_URL}/schoolInfo`, {
-      params: {
-        KEY: NEIS_API_KEY,
-        Type: 'json',
-        pIndex: 1,
-        pSize: 20,
-        SCHUL_NM: query,
-      },
-    });
-
-    // NEIS API 에러 메시지 핸들링 (200 OK로 오지만 내부에 RESULT 코드가 있는 경우가 많음)
-    if (response.data.RESULT && response.data.RESULT.CODE !== 'INFO-000') {
-      console.error('[NEIS API] API Error Response:', response.data.RESULT);
-      throw new Error(`NEIS API Error: ${response.data.RESULT.MESSAGE}`);
-    }
-
-    if (response.data.schoolInfo && response.data.schoolInfo[1].row) {
-      return response.data.schoolInfo[1].row;
-    }
-    
-    console.log('[NEIS API] No results found in response:', response.data);
-    return [];
-  } catch (error: any) {
-    console.error('[NEIS API] School search failed:', error?.response?.data || error.message || error);
-    throw error; // 에러를 상위 라우트로 전파해서 500 에러를 띄우도록 함
+  
+  if (!NEIS_API_KEY) {
+    throw new Error('NEIS_API_KEY 환경변수가 설정되지 않았습니다.');
   }
+
+  const response = await axios.get(`${BASE_URL}/schoolInfo`, {
+    params: {
+      KEY: NEIS_API_KEY,
+      Type: 'json',
+      pIndex: 1,
+      pSize: 20,
+      SCHUL_NM: query,
+    },
+  });
+
+  if (response.data.schoolInfo && response.data.schoolInfo[1].row) {
+    return response.data.schoolInfo[1].row;
+  }
+  return [];
 };
 
 export const getDailyMenu = async (
@@ -62,11 +52,6 @@ export const getDailyMenu = async (
       },
     });
 
-    if (response.data.RESULT && response.data.RESULT.CODE !== 'INFO-000') {
-      console.error('[NEIS API] Meal fetch API Error:', response.data.RESULT);
-      throw new Error(`NEIS API Error: ${response.data.RESULT.MESSAGE}`);
-    }
-
     if (response.data.mealServiceDietInfo && response.data.mealServiceDietInfo[1].row) {
       // row[0].DDISH_NM contains the menu string, e.g., "친환경현미밥(1.2)<br/>쇠고기미역국<br/>..."
       const menuString = response.data.mealServiceDietInfo[1].row[0].DDISH_NM as string;
@@ -77,8 +62,8 @@ export const getDailyMenu = async (
       return rawItems.map(item => item.trim()).filter(Boolean);
     }
     return [];
-  } catch (error: any) {
-    console.error('[NEIS API] Meal fetch failed:', error?.response?.data || error.message || error);
-    throw error;
+  } catch (error) {
+    console.error('Meal fetch failed:', error);
+    return [];
   }
 };
