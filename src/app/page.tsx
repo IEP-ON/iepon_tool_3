@@ -21,7 +21,7 @@ export default function Home() {
       <Toaster position="top-center" richColors />
       
       {/* 화면용 UI (인쇄 시 숨김) */}
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      <div className="screen-only flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
         <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
             <div>

@@ -15,10 +15,10 @@ export async function GET(request: Request) {
     const response = await axios.get('https://pixabay.com/api/', {
       params: {
         key: PIXABAY_API_KEY,
-        q: encodeURIComponent(query),
+        q: query,
         image_type: 'photo',
-        category: 'food',
-        per_page: 5,
+        lang: 'ko',
+        per_page: 10,
         safesearch: true,
       },
     });
