@@ -13,13 +13,12 @@ export function PrintLayout() {
   if (visibleItems.length === 0) return null;
 
   return (
-    // 전체 컨테이너는 너비 100%로 두고 하위 페이지들이 210mm를 가짐
-    <div className="print-container hidden print:flex bg-white w-full mx-auto flex-col">
+    // 전체 컨테이너
+    <div className="print-container hidden print:block bg-white w-full">
       
       {/* ================= 1페이지 (급식판 + 스티커) ================= */}
-      {/* 강제 페이지 넘김 스타일 적용 */}
       <div 
-        className="w-[210mm] min-h-[297mm] mx-auto p-10 flex flex-col"
+        className="w-full h-[296mm] p-8 flex flex-col box-border overflow-hidden"
         style={{ pageBreakAfter: 'always', breakAfter: 'page' }}
       >
         {/* 1. 상단: 급식판 영역 */}
@@ -30,7 +29,7 @@ export function PrintLayout() {
           
           {/* 급식판 디자인 */}
           <div 
-            className="w-full max-w-[700px] h-[340px] rounded-[50px] p-6 flex flex-col gap-6 relative bg-[#f1f5f9] border-2 border-white"
+            className="w-full max-w-[190mm] h-[340px] rounded-[50px] p-6 flex flex-col gap-6 relative bg-[#f1f5f9] border-2 border-white"
             style={{
               boxShadow: '12px 12px 24px rgba(166, 180, 200, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9)'
             }}
@@ -98,7 +97,7 @@ export function PrintLayout() {
             오늘의 메뉴 스티커
           </h2>
           
-          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-8 px-4 content-start flex-1`}>
+          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-8 px-4 content-center justify-items-center flex-1`}>
             {visibleItems.map((item) => (
               <div key={item.id} className="flex flex-col items-center">
                 {/* 원형 스티커 영역 */}
@@ -141,7 +140,7 @@ export function PrintLayout() {
       {/* ================= 2페이지 (경필쓰기 3회 반복) ================= */}
       {showTracingText && (
         <div 
-          className="w-[210mm] min-h-[297mm] mx-auto p-10 flex flex-col"
+          className="w-full min-h-[296mm] p-8 flex flex-col box-border"
           style={{ pageBreakBefore: 'always', breakBefore: 'page' }}
         >
           <h1 className="text-3xl font-black text-slate-700 mb-10 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto mt-4">
@@ -153,7 +152,7 @@ export function PrintLayout() {
               const chars = item.refined_name.split('');
               
               return (
-                <div key={`tracing-${item.id}`} className="flex items-center gap-6 pb-6 border-b border-dashed border-slate-200">
+                <div key={`tracing-${item.id}`} className="flex items-center gap-6 pb-6 border-b border-dashed border-slate-200 break-inside-avoid">
                   
                   {/* 좌측: 작은 음식 이미지 및 이름 */}
                   <div className="w-[120px] flex flex-col items-center gap-2 shrink-0">

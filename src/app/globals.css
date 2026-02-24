@@ -132,29 +132,10 @@
 }
 
 @media print {
-  /* Hide everything by default in print */
-  body * {
-    visibility: hidden;
-  }
-
-  /* Show only the print container and its children */
-  .print-container, .print-container * {
-    visibility: visible;
-  }
-
-  /* Position the print container properly */
-  .print-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 210mm;
-    margin: 0;
-    padding: 0;
-    background-color: white !important;
-  }
-
   body {
     background-color: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
