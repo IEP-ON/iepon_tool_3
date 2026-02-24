@@ -143,20 +143,21 @@ export function PrintLayout() {
           className="w-[210mm] h-[297mm] mx-auto p-10 flex flex-col box-border overflow-hidden bg-white shrink-0"
           style={{ pageBreakBefore: 'always', breakBefore: 'page' }}
         >
-          <h1 className="text-3xl font-black text-slate-700 mb-10 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto mt-4 shrink-0">
+          <h1 className="text-3xl font-black text-slate-700 mb-8 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto mt-4 shrink-0">
             오늘의 메뉴 따라 쓰기
           </h1>
 
-          <div className="flex flex-col gap-8 flex-1 pl-4">
+          {/* 가로형 다단 배치 (2열 그리드)로 변경하여 한 페이지에 최대 8~10개 메뉴 수용 */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-1 content-start">
             {visibleItems.map((item) => {
               const chars = item.refined_name.split('');
               
               return (
-                <div key={`tracing-${item.id}`} className="flex items-center gap-6 pb-6 border-b border-dashed border-slate-200 break-inside-avoid">
+                <div key={`tracing-${item.id}`} className="flex flex-col gap-3 pb-4 border-b border-dashed border-slate-200 break-inside-avoid">
                   
-                  {/* 좌측: 작은 음식 이미지 및 이름 */}
-                  <div className="w-[110px] flex flex-col items-center gap-2 shrink-0">
-                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-white">
+                  {/* 상단: 음식 이미지 및 이름 */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-white shrink-0">
                       {item.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img 
@@ -165,22 +166,22 @@ export function PrintLayout() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-200 text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-slate-200 text-[10px]">
                           NO IMG
                         </div>
                       )}
                     </div>
-                    <span className="font-bold text-slate-700 text-base">{item.refined_name}</span>
+                    <span className="font-bold text-slate-700 text-lg leading-tight break-keep">{item.refined_name}</span>
                   </div>
 
-                  {/* 우측: 따라쓰기 3세트 반복 */}
-                  <div className="flex flex-wrap gap-x-8 gap-y-4 flex-1 items-center">
+                  {/* 하단: 따라쓰기 3세트 (줄바꿈 허용) */}
+                  <div className="flex flex-wrap gap-x-4 gap-y-3">
                     {[1, 2, 3].map((setIndex) => (
                       <div key={setIndex} className="flex gap-1">
                         {chars.map((char, charIdx) => (
                           <div 
-                            key={`${setIndex}-${charIdx}`} 
-                            className="w-[45px] h-[45px] border-[2px] border-slate-400 flex items-center justify-center relative bg-white rounded-md shadow-sm"
+                            key={`${setIndex}-${charIdx}`}
+                            className="w-[38px] h-[38px] border-[2px] border-slate-400 flex items-center justify-center relative bg-white rounded-md shadow-sm"
                           >
                             {/* 십자 유도선 */}
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -189,7 +190,7 @@ export function PrintLayout() {
                             </div>
                             
                             {/* 흐린 글자 (따라쓰기용) - 첫 번째 세트는 진하게, 2/3번째는 흐리게 하여 학습 효과 높임 */}
-                            <span className={`font-bold text-2xl font-sans leading-none z-10 ${setIndex === 1 ? 'text-slate-300' : 'text-slate-200/50'}`}>
+                            <span className={`font-bold text-xl font-sans leading-none z-10 ${setIndex === 1 ? 'text-slate-300' : 'text-slate-200/40'}`}>
                               {char}
                             </span>
                           </div>
