@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { RefreshCw, Search, Loader2, Eye, EyeOff, Upload } from 'lucide-react';
+import { RefreshCw, Search, Loader2, Eye, EyeOff, Upload, Edit2 } from 'lucide-react';
 import { getDefaultImage } from '@/lib/utils/default-images';
 import { MenuItem } from '@/types/database';
 import { supabase } from '@/lib/supabase/client';
@@ -233,7 +233,7 @@ export function EditorSection() {
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <CardTitle>메뉴 편집 및 확인</CardTitle>
-          <CardDescription>출력될 이미지들을 확인하고 변경할 수 있습니다.</CardDescription>
+          <CardDescription>출력될 이미지들을 확인하고 변경할 수 있습니다. <br/><span className="text-indigo-600 font-medium text-xs">💡 메뉴명을 클릭하면 따라쓰기와 스티커에 출력될 이름을 수정할 수 있습니다.</span></CardDescription>
         </div>
         
         {/* 인쇄 옵션 토글 */}
@@ -278,7 +278,7 @@ export function EditorSection() {
               </button>
 
               {/* 메뉴 이름 (클릭 시 수정) */}
-              <div className="w-full h-8 flex items-center justify-center">
+              <div className="w-full h-8 flex items-center justify-center relative group/name">
                 {editingItemId === item.id ? (
                   <Input 
                     ref={inputRef}
@@ -290,14 +290,15 @@ export function EditorSection() {
                   />
                 ) : (
                   <div 
-                    className="text-center w-full truncate font-semibold cursor-text hover:bg-slate-100 rounded px-1 py-0.5 transition-colors" 
+                    className="flex items-center justify-center w-full cursor-text hover:bg-slate-100 rounded px-1 py-0.5 transition-colors" 
                     title="클릭하여 이름 수정"
                     onClick={() => {
                       setEditingName(item.refined_name);
                       setEditingItemId(item.id);
                     }}
                   >
-                    {item.refined_name}
+                    <span className="truncate font-semibold text-center">{item.refined_name}</span>
+                    <Edit2 className="w-3 h-3 ml-1 text-slate-400 opacity-0 group-hover/name:opacity-100 transition-opacity flex-shrink-0" />
                   </div>
                 )}
               </div>
