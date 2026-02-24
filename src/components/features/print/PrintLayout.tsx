@@ -17,12 +17,12 @@ export function PrintLayout() {
     <div className="print-container hidden print:flex bg-white w-full flex-col">
       
       {/* ================= 1페이지 (급식판 + 스티커) ================= */}
-      {/* 정확한 A4 크기 지정으로 브라우저 여백 변수 차단 (Mac 잘림 방지) */}
+      {/* 정확한 A4 크기 지정 (210mm x 297mm) */}
       <div 
         className="w-[210mm] h-[297mm] mx-auto flex flex-col box-border overflow-hidden relative bg-white shrink-0"
         style={{ pageBreakAfter: 'always', breakAfter: 'page' }}
       >
-        {/* 1. 상단: 급식판 영역 (정확히 148.5mm = A5 세로 사이즈로 분할) */}
+        {/* 1. 상단: 급식판 영역 (정확히 148.5mm = 297mm의 절반 사이즈로 분할하여 완벽한 A5 비율 맞춤) */}
         <div className="h-[148.5mm] w-full px-10 py-8 border-b-[2px] border-dashed border-slate-300 relative flex flex-col items-center justify-center box-border">
           <h1 className="text-3xl font-black text-slate-700 mb-4 text-center tracking-tight">
             {schoolName} 오늘의 급식 <span className="text-xl font-bold text-slate-500 ml-2">({format(selectedDate, 'yyyy년 M월 d일', { locale: ko })})</span>
