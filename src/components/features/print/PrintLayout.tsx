@@ -29,14 +29,14 @@ export function PrintLayout() {
         style={{ pageBreakAfter: 'always', breakAfter: 'page' }}
       >
         {/* 1. 상단: 급식판 영역 (정확히 148.5mm = 297mm의 절반 사이즈로 분할하여 완벽한 A5 비율 맞춤) */}
-        <div className="h-[148.5mm] w-full px-10 py-8 border-b-[2px] border-dashed border-slate-300 relative flex flex-col items-center justify-center box-border">
-          <h1 className="text-3xl font-black text-slate-700 mb-4 text-center tracking-tight">
+        <div className="h-[148.5mm] w-full px-6 py-6 border-b-[2px] border-dashed border-slate-300 relative flex flex-col items-center justify-center box-border">
+          <h1 className="text-3xl font-black text-slate-700 mb-3 text-center tracking-tight">
             {schoolName} 오늘의 급식 <span className="text-xl font-bold text-slate-500 ml-2">({format(selectedDate, 'yyyy년 M월 d일', { locale: ko })})</span>
           </h1>
           
-          {/* 급식판 디자인 (너비/높이를 비율에 맞게 조정하여 잘림 방지) */}
+          {/* 급식판 디자인 (상단 높이 꽉 채우도록 확대) */}
           <div 
-            className="w-full max-w-[190mm] flex-1 max-h-[320px] rounded-[50px] p-6 flex flex-col gap-5 relative bg-[#f1f5f9] border-2 border-white shrink-0"
+            className="w-full max-w-[195mm] flex-1 max-h-[440px] rounded-[40px] p-5 flex flex-col gap-4 relative bg-[#f1f5f9] border-2 border-white shrink-0"
             style={{
               boxShadow: '12px 12px 24px rgba(166, 180, 200, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9)'
             }}
@@ -98,23 +98,23 @@ export function PrintLayout() {
         </div>
 
         {/* 2. 하단: 오려 붙일 스티커 (정확히 148.5mm 높이 차지) */}
-        <div className="h-[148.5mm] w-full px-10 py-8 flex flex-col overflow-hidden box-border">
-          <h2 className="text-2xl font-black mb-4 text-center text-slate-700 bg-slate-100 py-2.5 rounded-full mx-auto w-[60%] shrink-0">
+        <div className="h-[148.5mm] w-full px-6 py-6 flex flex-col overflow-hidden box-border">
+          <h2 className="text-2xl font-black mb-3 text-center text-slate-700 bg-slate-100 py-2.5 rounded-full mx-auto w-[60%] shrink-0">
             오늘의 메뉴 스티커
           </h2>
           
-          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-4 px-4 content-start justify-items-center flex-1 overflow-hidden pb-4`}>
+          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-4 gap-y-4 px-2 content-start justify-items-center flex-1 overflow-hidden pb-4`}>
             {visibleItems.map((item) => (
               <div key={item.id} className="flex flex-col items-center shrink-0">
-                {/* 원형 스티커 영역 */}
+                {/* 원형 스티커 영역 (기존 100px -> 150px로 1.5배 확대) */}
                 <div 
-                  className="w-[100px] h-[100px] rounded-full p-2 relative flex items-center justify-center bg-[#f1f5f9]"
+                  className="w-[150px] h-[150px] rounded-full p-2 relative flex items-center justify-center bg-[#f1f5f9]"
                   style={{
                     boxShadow: '6px 6px 12px rgba(166, 180, 200, 0.4), -6px -6px 12px rgba(255, 255, 255, 0.9)'
                   }}
                 >
                   <div className="w-full h-full rounded-full border-[3px] border-dashed border-slate-300 overflow-hidden bg-white">
-                    {item.image ? (
+                    {item.image?.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img 
                         src={item.image.image_url} 
@@ -164,7 +164,7 @@ export function PrintLayout() {
                     {/* 좌측: 음식 이미지 및 이름 */}
                     <div className="w-[100px] flex flex-col items-center gap-1.5 shrink-0">
                       <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-white">
-                        {item.image ? (
+                        {item.image?.image_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img 
                             src={item.image.image_url} 
