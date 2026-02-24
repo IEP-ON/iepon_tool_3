@@ -29,12 +29,16 @@ export function EditorSection() {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const loadedMenusRef = useRef<Set<string>>(new Set());
   
   // 자동 이미지 로딩 (Tier 1 -> Tier 2 DB 캐시 -> 수동)
   useEffect(() => {
     const loadMissingImages = async () => {
       for (const item of menuItems) {
-        if (!item.image) {
+        // 이미지가 없고, 아직 캐시 조회를 시도하지 않은 메뉴만 처리
+        if (!item.image && !loadedMenusRef.current.has(item.id)) {
+          loadedMenusRef.current.add(item.id); // 처리 중/완료 마킹
+          
           // 1. Tier 1 (기본 에셋 확인)
           const defaultImg = getDefaultImage(item.refined_name);
           if (defaultImg) {
@@ -65,6 +69,11 @@ export function EditorSection() {
       loadMissingImages();
     }
   }, [menuItems, updateMenuItemImage]);
+
+  // 메뉴 리스트가 새로 변경되었을 때 (예: 학교/날짜 변경) loadedMenusRef 초기화
+  useEffect(() => {
+    loadedMenusRef.current = new Set();
+  }, [menuItems.length]); // length가 바뀌거나 아예 새로운 배열이 들어올 때 대략적 초기화. 완벽하게 하려면 SearchSection에서 reset action을 호출하는 것이 더 좋으나 일단 임시 조치
 
   // 다이얼로그 열릴 때 검색어 자동 세팅
   useEffect(() => {
