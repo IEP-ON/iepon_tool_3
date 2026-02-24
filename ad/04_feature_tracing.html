@@ -7,36 +7,143 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
-        .feed-container { width: 1080px; height: 1080px; background: #fdf2f8; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: #f9f0df; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
         
-        .header { text-align: center; margin-bottom: 50px; z-index: 10; }
-        .step-badge { background: #db2777; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 24px; display: inline-block; margin-bottom: 20px; }
-        .title { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0 0 15px 0; line-height: 1.2; }
-        .highlight { color: #db2777; }
-        .subtitle { font-size: 32px; font-weight: 500; color: #64748b; margin: 0; }
+        .header { text-align: center; margin-bottom: 60px; z-index: 10; }
         
-        .tracing-mockup { width: 850px; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 30px; position: relative; }
+        .step-badge { 
+            background: #be185d; /* Pink-700 */
+            color: white; 
+            padding: 10px 24px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 24px; 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
         
-        .toggle-btn { position: absolute; top: -30px; right: 50px; background: white; border: 4px solid #db2777; border-radius: 50px; padding: 10px 20px; font-size: 24px; font-weight: bold; color: #db2777; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 15px -3px rgba(219, 39, 119, 0.2); }
-        .toggle-track { width: 60px; height: 34px; background: #db2777; border-radius: 20px; position: relative; }
-        .toggle-thumb { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; right: 4px; top: 4px; }
+        .title { 
+            font-size: 72px; 
+            font-weight: 900; 
+            color: #4a3b32; 
+            margin: 0 0 15px 0; 
+            line-height: 1.2; 
+        }
         
-        .tracing-row { display: flex; align-items: center; gap: 40px; border-bottom: 3px dashed #e2e8f0; padding-bottom: 25px; }
+        .highlight { color: #be185d; }
         
-        .menu-preview { display: flex; flex-direction: column; align-items: center; width: 150px; flex-shrink: 0; text-align: center; gap: 15px; }
-        .menu-img { width: 120px; height: 120px; border-radius: 50%; background: #f8fafc; border: 4px solid #cbd5e1; display: flex; justify-content: center; align-items: center; font-size: 60px; margin: 0 auto; }
-        .menu-text { font-size: 28px; font-weight: 800; color: #334155; }
+        .subtitle { 
+            font-size: 34px; 
+            font-weight: 600; 
+            color: #786860; 
+            margin: 0; 
+        }
+        
+        .tracing-mockup { 
+            width: 850px; 
+            background: white; 
+            border-radius: 30px; 
+            padding: 50px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 40px; 
+            position: relative; 
+            z-index: 10;
+            border: 4px solid white;
+        }
+        
+        .toggle-btn { 
+            position: absolute; 
+            top: -35px; 
+            right: 50px; 
+            background: white; 
+            border: 4px solid #be185d; 
+            border-radius: 50px; 
+            padding: 12px 25px; 
+            font-size: 26px; 
+            font-weight: 800; 
+            color: #be185d; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            box-shadow: 0 10px 20px rgba(190, 24, 93, 0.2); 
+            z-index: 20;
+        }
+        
+        .toggle-track { width: 64px; height: 36px; background: #be185d; border-radius: 20px; position: relative; }
+        .toggle-thumb { width: 28px; height: 28px; background: white; border-radius: 50%; position: absolute; right: 4px; top: 4px; }
+        
+        .tracing-row { display: flex; align-items: center; gap: 40px; border-bottom: 3px dashed #e2e8f0; padding-bottom: 30px; }
+        
+        .menu-preview { display: flex; flex-direction: column; align-items: center; width: 160px; flex-shrink: 0; text-align: center; gap: 15px; }
+        
+        .menu-img { 
+            width: 130px; 
+            height: 130px; 
+            border-radius: 50%; 
+            background: #fdf2f8; 
+            border: 4px solid #fbcfe8; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 70px; 
+            margin: 0 auto; 
+        }
+        
+        .menu-text { font-size: 30px; font-weight: 800; color: #334155; }
         
         .writing-area { display: flex; gap: 20px; flex-wrap: wrap; }
-        .writing-box { width: 70px; height: 70px; border: 3px solid #94a3b8; border-radius: 12px; display: flex; justify-content: center; align-items: center; position: relative; font-size: 40px; font-weight: 700; color: #cbd5e1; }
-        .writing-box::before { content: ''; position: absolute; width: 100%; height: 2px; background: #cbd5e1; border-top: 2px dashed #94a3b8; }
-        .writing-box::after { content: ''; position: absolute; height: 100%; width: 2px; background: #cbd5e1; border-left: 2px dashed #94a3b8; }
+        
+        .writing-box { 
+            width: 80px; 
+            height: 80px; 
+            border: 3px solid #cbd5e1; 
+            border-radius: 16px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative; 
+            font-size: 44px; 
+            font-weight: 700; 
+            color: #e2e8f0; 
+            background: #f8fafc;
+        }
+        
+        .writing-box::before { content: ''; position: absolute; width: 100%; height: 2px; background: #cbd5e1; border-top: 2px dashed #94a3b8; opacity: 0.5; }
+        .writing-box::after { content: ''; position: absolute; height: 100%; width: 2px; background: #cbd5e1; border-left: 2px dashed #94a3b8; opacity: 0.5; }
         .writing-box.strong { color: #64748b; }
+        
+        .deco-shape {
+            position: absolute;
+            width: 1000px;
+            height: 600px;
+            background: #fce7f3;
+            transform: rotate(-15deg);
+            bottom: -200px;
+            left: -100px;
+            border-radius: 100px;
+            z-index: 1;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
     <div class="feed-container">
+        <div class="deco-shape"></div>
         
         <div class="header">
             <div class="step-badge">기능 3. 글씨 쓰기 학습지</div>
@@ -65,7 +172,7 @@
                 </div>
             </div>
             
-            <div class="tracing-row" style="border:none;">
+            <div class="tracing-row" style="border:none; padding-bottom: 0;">
                 <div class="menu-preview">
                     <div class="menu-img">🍛</div>
                     <div class="menu-text">카레</div>

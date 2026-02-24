@@ -7,30 +7,123 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
-        .feed-container { width: 1080px; height: 1080px; background: white; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #333; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: #f9f0df; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
         
-        .header { text-align: center; margin-bottom: 60px; }
-        .step-badge { background: #10b981; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 24px; display: inline-block; margin-bottom: 20px; }
-        .title { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0 0 15px 0; line-height: 1.2; }
-        .highlight { color: #10b981; }
-        .subtitle { font-size: 32px; font-weight: 500; color: #64748b; margin: 0; }
+        .header { text-align: center; margin-bottom: 60px; z-index: 10; }
         
-        .ui-mockup { width: 850px; background: #f8fafc; border-radius: 24px; border: 2px solid #e2e8f0; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+        .step-badge { 
+            background: #15803d; /* Warm Green */
+            color: white; 
+            padding: 10px 24px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 24px; 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .title { 
+            font-size: 72px; 
+            font-weight: 900; 
+            color: #4a3b32; 
+            margin: 0 0 15px 0; 
+            line-height: 1.2; 
+        }
+        
+        .highlight { color: #15803d; }
+        
+        .subtitle { 
+            font-size: 34px; 
+            font-weight: 600; 
+            color: #786860; 
+            margin: 0; 
+        }
+        
+        .ui-mockup { 
+            width: 850px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 30px; 
+            border: 4px solid #fff; 
+            box-shadow: 0 20px 40px rgba(74, 59, 50, 0.1); 
+            padding: 50px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 35px; 
+            box-sizing: border-box;
+            z-index: 10;
+        }
         
         .input-group { display: flex; flex-direction: column; gap: 15px; }
-        .label { font-size: 28px; font-weight: 700; color: #334155; }
-        .input-box { width: 100%; height: 80px; background: white; border: 2px solid #cbd5e1; border-radius: 16px; display: flex; align-items: center; padding: 0 30px; box-sizing: border-box; font-size: 32px; color: #94a3b8; }
-        .input-box.active { border-color: #10b981; color: #0f172a; font-weight: 600; }
+        .label { font-size: 28px; font-weight: 700; color: #57534e; }
         
-        .btn-large { width: 100%; height: 90px; background: #10b981; color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; margin-top: 20px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); }
+        .input-box { 
+            width: 100%; 
+            height: 90px; 
+            background: white; 
+            border: 3px solid #d6d3d1; 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 30px; 
+            box-sizing: border-box; 
+            font-size: 34px; 
+            color: #a8a29e; 
+        }
         
-        .floating-icon { position: absolute; font-size: 120px; right: 80px; top: 150px; transform: rotate(15deg); opacity: 0.8; }
-        .floating-icon-2 { position: absolute; font-size: 100px; left: 80px; bottom: 150px; transform: rotate(-10deg); opacity: 0.8; }
+        .input-box.active { 
+            border-color: #15803d; 
+            color: #1c1917; 
+            font-weight: 600; 
+            background: #f0fdf4;
+        }
+        
+        .btn-large { 
+            width: 100%; 
+            height: 100px; 
+            background: #15803d; 
+            color: white; 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 38px; 
+            font-weight: 800; 
+            margin-top: 20px; 
+            box-shadow: 0 10px 20px rgba(21, 128, 61, 0.3); 
+        }
+        
+        .floating-icon { position: absolute; font-size: 150px; right: 50px; top: 150px; transform: rotate(15deg); opacity: 0.15; filter: blur(2px); }
+        .floating-icon-2 { position: absolute; font-size: 120px; left: 80px; bottom: 100px; transform: rotate(-10deg); opacity: 0.15; filter: blur(2px); }
+        
+        .deco-circle {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: #dcfce7;
+            border-radius: 50%;
+            top: -200px;
+            left: -200px;
+            opacity: 0.5;
+            filter: blur(80px);
+        }
     </style>
 </head>
 <body>
     <div class="feed-container">
+        <div class="deco-circle"></div>
         <div class="floating-icon">🏫</div>
         <div class="floating-icon-2">📅</div>
         
