@@ -9,8 +9,14 @@ export function PrintLayout() {
 
   // 인쇄 대상 항목 필터링 (숨김 처리된 것 제외)
   const visibleItems = menuItems.filter(item => !item.isHidden);
-
+  
   if (visibleItems.length === 0) return null;
+
+  // 따라쓰기 페이지 단위 분할 (8개씩)
+  const tracingChunks: typeof visibleItems[] = [];
+  for (let i = 0; i < visibleItems.length; i += 8) {
+    tracingChunks.push(visibleItems.slice(i, i + 8));
+  }
 
   return (
     // 전체 컨테이너
@@ -137,74 +143,83 @@ export function PrintLayout() {
         </div>
       </div>
 
-      {/* ================= 2페이지 (경필쓰기 3회 반복) ================= */}
-      {showTracingText && (
+      {/* ================= 2페이지~ (경필쓰기 8개 단위 분할, 90도 회전 적용) ================= */}
+      {showTracingText && tracingChunks.map((chunk, pageIndex) => (
         <div 
-          className="w-[210mm] h-[297mm] mx-auto p-10 flex flex-col box-border overflow-hidden bg-white shrink-0"
+          key={`tracing-page-${pageIndex}`}
+          className="w-[210mm] h-[297mm] mx-auto relative box-border overflow-hidden bg-white shrink-0" 
           style={{ pageBreakBefore: 'always', breakBefore: 'page' }}
         >
-          <h1 className="text-3xl font-black text-slate-700 mb-8 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto mt-4 shrink-0">
-            오늘의 메뉴 따라 쓰기
-          </h1>
+          {/* 90도 회전된 내부 컨테이너 (실제 내용은 가로 레이아웃 w-297 h-210) */}
+          <div 
+            className="absolute top-0 left-full origin-top-left rotate-90 w-[297mm] h-[210mm] flex flex-col p-8 box-border bg-white"
+          >
+            <h1 className="text-2xl font-black text-slate-700 mb-6 text-center tracking-tight border-b-4 border-slate-200 pb-3 inline-block mx-auto shrink-0">
+              오늘의 메뉴 따라 쓰기 {tracingChunks.length > 1 ? `(${pageIndex + 1}/${tracingChunks.length})` : ''}
+            </h1>
 
-          {/* 가로형 다단 배치 (2열 그리드)로 변경하여 한 페이지에 최대 8~10개 메뉴 수용 */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-8 flex-1 content-start">
-            {visibleItems.map((item) => {
-              const chars = item.refined_name.split('');
-              
-              return (
-                <div key={`tracing-${item.id}`} className="flex flex-col gap-3 pb-4 border-b border-dashed border-slate-200 break-inside-avoid">
-                  
-                  {/* 상단: 음식 이미지 및 이름 */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-white shrink-0">
-                      {item.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img 
-                          src={item.image.image_url} 
-                          alt={item.refined_name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-200 text-[10px]">
-                          NO IMG
-                        </div>
-                      )}
-                    </div>
-                    <span className="font-bold text-slate-700 text-lg leading-tight break-keep">{item.refined_name}</span>
-                  </div>
-
-                  {/* 하단: 따라쓰기 3세트 (줄바꿈 허용) */}
-                  <div className="flex flex-wrap gap-x-4 gap-y-3">
-                    {[1, 2, 3].map((setIndex) => (
-                      <div key={setIndex} className="flex gap-1">
-                        {chars.map((char, charIdx) => (
-                          <div 
-                            key={`${setIndex}-${charIdx}`}
-                            className="w-[38px] h-[38px] border-[2px] border-slate-400 flex items-center justify-center relative bg-white rounded-md shadow-sm"
-                          >
-                            {/* 십자 유도선 */}
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="w-full h-[1px] bg-slate-300 border-dashed border-t"></div>
-                              <div className="absolute h-full w-[1px] bg-slate-300 border-dashed border-l"></div>
-                            </div>
-                            
-                            {/* 흐린 글자 (따라쓰기용) - 첫 번째 세트는 진하게, 2/3번째는 흐리게 하여 학습 효과 높임 */}
-                            <span className={`font-bold text-xl font-sans leading-none z-10 ${setIndex === 1 ? 'text-slate-300' : 'text-slate-200/40'}`}>
-                              {char}
-                            </span>
+            <div className="flex flex-col gap-0 flex-1 justify-between pb-2">
+              {chunk.map((item) => {
+                const chars = item.refined_name.split('');
+                
+                return (
+                  <div key={`tracing-${item.id}`} className="flex items-center gap-6 py-2 border-b border-dashed border-slate-200 break-inside-avoid flex-1">
+                    
+                    {/* 좌측: 음식 이미지 및 이름 */}
+                    <div className="w-[100px] flex flex-col items-center gap-1.5 shrink-0">
+                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-white">
+                        {item.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img 
+                            src={item.image.image_url} 
+                            alt={item.refined_name} 
+                            className="w-full h-full object-cover" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 text-[10px] font-bold text-center leading-tight">
+                            사진<br/>없음
                           </div>
-                        ))}
+                        )}
                       </div>
-                    ))}
+                      <span className="font-bold text-slate-700 text-[13px] truncate w-full text-center leading-tight">{item.refined_name}</span>
+                    </div>
+
+                    {/* 우측: 따라쓰기 4세트 반복 */}
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 flex-1 items-center overflow-hidden h-full content-center">
+                      {[1, 2, 3, 4].map((setIndex) => (
+                        <div key={setIndex} className="flex gap-1 shrink-0">
+                          {chars.map((char: string, charIdx: number) => (
+                            <div 
+                              key={`${setIndex}-${charIdx}`} 
+                              className="w-[38px] h-[38px] border-[2px] border-slate-400 flex items-center justify-center relative bg-white rounded-md shadow-sm shrink-0"
+                            >
+                              {/* 십자 유도선 */}
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="w-full h-[1px] bg-slate-300 border-dashed border-t"></div>
+                                <div className="absolute h-full w-[1px] bg-slate-300 border-dashed border-l"></div>
+                              </div>
+                              
+                              {/* 글자 (점차 흐리게) */}
+                              <span className={`font-bold text-xl font-sans leading-none z-10 ${
+                                setIndex === 1 ? 'text-slate-300' : 
+                                setIndex === 2 ? 'text-slate-200/60' : 
+                                'text-slate-100/30'
+                              }`}>
+                                {char}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                    
                   </div>
-                  
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
