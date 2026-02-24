@@ -128,7 +128,7 @@
 /* --- Print Styles --- */
 @page {
   size: A4 portrait;
-  margin: 0; /* Remove default browser margins to use our own */
+  margin: 0; /* 브라우저 기본 여백 제거 */
 }
 
 @media print {
@@ -142,23 +142,19 @@
     visibility: visible;
   }
 
-  /* Position the print container at the top left of the page */
+  /* Position the print container properly */
   .print-container {
     position: absolute;
     left: 0;
     top: 0;
     width: 210mm;
-    height: 297mm;
     margin: 0;
-    padding: 20mm; /* Add some padding inside the A4 */
-    box-sizing: border-box;
+    padding: 0;
     background-color: white !important;
-    display: flex !important;
-    flex-direction: column;
   }
 
-  /* Ensure background colors and images are printed */
-  * {
+  body {
+    background-color: white !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

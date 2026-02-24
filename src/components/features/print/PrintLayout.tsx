@@ -13,29 +13,29 @@ export function PrintLayout() {
   if (visibleItems.length === 0) return null;
 
   return (
-    // 페이지별 컨테이너를 따로 두어 겹침 완전 방지
-    <div className="print-container hidden print:block bg-white w-full mx-auto">
+    // 전체 컨테이너는 너비 100%로 두고 하위 페이지들이 210mm를 가짐
+    <div className="print-container hidden print:flex bg-white w-full mx-auto flex-col">
       
       {/* ================= 1페이지 (급식판 + 스티커) ================= */}
-      {/* 강제 페이지 넘김 스타일 적용 (브라우저 호환성) */}
+      {/* 강제 페이지 넘김 스타일 적용 */}
       <div 
-        className="w-[210mm] h-[290mm] mx-auto p-6 relative overflow-hidden flex flex-col box-border"
+        className="w-[210mm] min-h-[297mm] mx-auto p-10 flex flex-col"
         style={{ pageBreakAfter: 'always', breakAfter: 'page' }}
       >
-        {/* 1. 상단: 급식판 영역 (높이를 56%로 늘려 더 꽉 차게) */}
-        <div className="h-[56%] w-full border-b-2 border-dashed border-slate-300 pb-4 relative flex flex-col items-center justify-center">
+        {/* 1. 상단: 급식판 영역 */}
+        <div className="flex-[55] w-full border-b-2 border-dashed border-slate-300 pb-6 relative flex flex-col items-center justify-center">
           <h1 className="text-3xl font-black text-slate-700 mb-6 text-center tracking-tight">
             {schoolName} 오늘의 급식 <span className="text-xl font-bold text-slate-500 ml-2">({format(selectedDate, 'yyyy년 M월 d일', { locale: ko })})</span>
           </h1>
           
-          {/* 급식판 디자인: 높이를 320px -> 400px 로 대폭 확대 */}
+          {/* 급식판 디자인 */}
           <div 
-            className="w-full max-w-[850px] h-[400px] rounded-[50px] p-6 flex flex-col gap-6 relative bg-[#f1f5f9] border-2 border-white"
+            className="w-full max-w-[700px] h-[340px] rounded-[50px] p-6 flex flex-col gap-6 relative bg-[#f1f5f9] border-2 border-white"
             style={{
               boxShadow: '12px 12px 24px rgba(166, 180, 200, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9)'
             }}
           >
-            {/* 반찬칸 3개 (상단) - 비율 유지 */}
+            {/* 반찬칸 3개 (상단) */}
             <div className="flex h-[45%] gap-5 px-3">
               {[1, 2, 3].map((i) => (
                 <div 
@@ -71,9 +71,9 @@ export function PrintLayout() {
             </div>
           </div>
 
-          {/* 간식/우유 칸 (더 크게 확대) */}
+          {/* 간식/우유 칸 */}
           <div 
-            className="absolute top-1/2 right-2 -translate-y-1/2 w-32 h-32 rounded-[30px] flex flex-col items-center justify-center text-xl text-slate-500 font-bold bg-[#f1f5f9] border-2 border-white"
+            className="absolute top-1/2 right-4 -translate-y-1/2 w-28 h-28 rounded-[30px] flex flex-col items-center justify-center text-lg text-slate-500 font-bold bg-[#f1f5f9] border-2 border-white"
             style={{
               boxShadow: '8px 8px 16px rgba(166, 180, 200, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.9)'
             }}
@@ -83,27 +83,27 @@ export function PrintLayout() {
           </div>
         </div>
 
-        {/* 절취선 위치 조정 (상단 영역이 커졌으므로 57.5%로 내림) */}
-        <div className="absolute top-[57.5%] left-0 w-full flex items-center justify-center text-slate-400">
-          <div className="w-full border-t-[3px] border-dashed border-slate-300 absolute"></div>
-          <span className="bg-white px-4 text-base font-bold relative z-10 flex items-center gap-2 text-slate-500 rounded-full">
+        {/* 절취선 표시 */}
+        <div className="relative w-full flex items-center justify-center text-slate-400 z-10 -my-3">
+          <div className="w-full border-t-[3px] border-dashed border-slate-300 absolute top-1/2 -translate-y-1/2"></div>
+          <span className="bg-white px-4 py-1 text-base font-bold relative z-10 flex items-center gap-2 text-slate-500 rounded-full">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
             싹둑싹둑 오려주세요
           </span>
         </div>
 
-        {/* 2. 하단: 오려 붙일 스티커 (상단이 커졌으므로 42%로 축소) */}
-        <div className="h-[42%] w-full pt-8 flex flex-col">
-          <h2 className="text-2xl font-black mb-4 text-center text-slate-700 bg-slate-100 py-3 rounded-full mx-auto w-[60%]">
+        {/* 2. 하단: 오려 붙일 스티커 */}
+        <div className="flex-[45] w-full pt-10 flex flex-col">
+          <h2 className="text-2xl font-black mb-8 text-center text-slate-700 bg-slate-100 py-3 rounded-full mx-auto w-[60%]">
             오늘의 메뉴 스티커
           </h2>
           
-          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-6 px-4 content-start flex-1 overflow-hidden`}>
+          <div className={`grid ${visibleItems.length > 6 ? 'grid-cols-4' : 'grid-cols-3'} gap-x-6 gap-y-8 px-4 content-start flex-1`}>
             {visibleItems.map((item) => (
               <div key={item.id} className="flex flex-col items-center">
                 {/* 원형 스티커 영역 */}
                 <div 
-                  className="w-[110px] h-[110px] rounded-full p-1.5 relative flex items-center justify-center bg-[#f1f5f9]"
+                  className="w-[120px] h-[120px] rounded-full p-2 relative flex items-center justify-center bg-[#f1f5f9]"
                   style={{
                     boxShadow: '8px 8px 16px rgba(166, 180, 200, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.9)'
                   }}
@@ -129,7 +129,7 @@ export function PrintLayout() {
                   </div>
                 </div>
                 {/* 하단 여백 및 가이드용 이름 */}
-                <div className="mt-2 text-sm font-bold text-slate-500">
+                <div className="mt-3 text-sm font-bold text-slate-500">
                   {item.refined_name}
                 </div>
               </div>
@@ -141,14 +141,14 @@ export function PrintLayout() {
       {/* ================= 2페이지 (경필쓰기 3회 반복) ================= */}
       {showTracingText && (
         <div 
-          className="w-[210mm] min-h-[297mm] mx-auto p-10 relative box-border flex flex-col"
+          className="w-[210mm] min-h-[297mm] mx-auto p-10 flex flex-col"
           style={{ pageBreakBefore: 'always', breakBefore: 'page' }}
         >
-          <h1 className="text-3xl font-black text-slate-700 mb-10 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto">
+          <h1 className="text-3xl font-black text-slate-700 mb-10 text-center tracking-tight border-b-4 border-slate-200 pb-4 inline-block mx-auto mt-4">
             오늘의 메뉴 따라 쓰기
           </h1>
 
-          <div className="flex flex-col gap-10 flex-1">
+          <div className="flex flex-col gap-10 flex-1 pl-4">
             {visibleItems.map((item) => {
               const chars = item.refined_name.split('');
               
