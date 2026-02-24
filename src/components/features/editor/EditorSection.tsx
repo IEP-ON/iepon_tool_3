@@ -17,7 +17,7 @@ import { supabase } from '@/lib/supabase/client';
 import imageCompression from 'browser-image-compression';
 
 export function EditorSection() {
-  const { menuItems, updateMenuItemImage, isLoading, showTracingText, toggleTracingText, toggleMenuItemVisibility, updateMenuItemName } = useMenuStore();
+  const { menuItems, updateMenuItemImage, updateMenuItemImageByRefinedName, isLoading, showTracingText, toggleTracingText, toggleMenuItemVisibility, updateMenuItemName } = useMenuStore();
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
   
   // Dialog States
@@ -186,8 +186,8 @@ export function EditorSection() {
 
       const publicUrl = data.publicUrl;
 
-      // 5. 로컬 상태 업데이트 및 DB 캐시 저장
-      updateMenuItemImage(activeItem.id, publicUrl, 'user_upload');
+      // 5. 로컬 상태 업데이트 및 DB 캐시 저장 (동일 refined_name 모두 적용)
+      updateMenuItemImageByRefinedName(activeItem.refined_name, publicUrl, 'user_upload');
       saveToDbCache(activeItem.refined_name, activeItem.original_name, publicUrl, 'user_upload');
       
       toast.success('이미지가 성공적으로 업로드되었습니다!');
@@ -207,7 +207,7 @@ export function EditorSection() {
   const handleSelectImage = async (url: string) => {
     if (!activeItem) return;
     
-    updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
+    updateMenuItemImageByRefinedName(activeItem.refined_name, url, 'tier3_pixabay');
     saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
     toast.success('웹 검색 이미지가 적용되었습니다!');
     setActiveItem(null);
