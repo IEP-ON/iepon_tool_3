@@ -1,18 +1,16 @@
 export const defaultImageMap: Record<string, string> = {
-  // 정확히 일치하는 경우를 위한 맵
-  '우유': '/assets/default-images/milk.png',
-  '요구르트': '/assets/default-images/yogurt.png',
-  '사과': '/assets/default-images/apple.png',
-  '배': '/assets/default-images/pear.png',
-  '귤': '/assets/default-images/tangerine.png',
-  '바나나': '/assets/default-images/banana.png',
-  '방울토마토': '/assets/default-images/tomato.png',
+  // 실제 이미지가 준비되기 전까지는 빈 맵으로 유지하여 깨진 이미지가 뜨지 않도록 함
 };
 
 /**
  * 정제된 메뉴명으로 기본(로컬) 에셋 이미지가 있는지 확인합니다.
  */
 export function getDefaultImage(refinedName: string): string | null {
+  // 실제 에셋 이미지가 추가될 때까지 기본 이미지 사용을 중단하고 항상 null을 반환하여
+  // UI에서 '검색' 아이콘이 정상적으로 표시되도록 유도합니다.
+  return null;
+
+  /* 실제 에셋 추가 후 복구할 로직:
   // 1. 정확히 일치하는 경우
   if (defaultImageMap[refinedName]) {
     return defaultImageMap[refinedName];
@@ -40,4 +38,5 @@ export function getDefaultImage(refinedName: string): string | null {
   if (name.includes('우유')) return '/assets/default-images/milk.png';
   
   return null;
+  */
 }
