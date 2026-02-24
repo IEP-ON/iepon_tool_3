@@ -155,8 +155,8 @@ export function EditorSection() {
   const handleSelectImage = async (url: string) => {
     if (!activeItem) return;
     
-    updateMenuItemImage(activeItem.id, url, 'tier3_naver');
-    saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_naver');
+    updateMenuItemImage(activeItem.id, url, 'tier3_pixabay');
+    saveToDbCache(activeItem.refined_name, activeItem.original_name, url, 'tier3_pixabay');
     toast.success('웹 검색 이미지가 적용되었습니다!');
     setActiveItem(null);
   };
