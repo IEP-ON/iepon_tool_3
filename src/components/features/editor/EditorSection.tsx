@@ -230,23 +230,30 @@ export function EditorSection() {
 
   return (
     <Card className="w-full" data-tour="editor-section">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <CardTitle>메뉴 편집 및 확인</CardTitle>
-          <CardDescription>출력될 이미지들을 확인하고 변경할 수 있습니다. <br/><span className="text-indigo-600 font-medium text-xs">💡 메뉴명을 클릭하면 따라쓰기와 스티커에 출력될 이름을 수정할 수 있습니다.</span></CardDescription>
+      <CardHeader className="space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <CardTitle>메뉴 편집 및 확인</CardTitle>
+            <CardDescription>출력될 이미지들을 확인하고 변경할 수 있습니다.</CardDescription>
+          </div>
+          
+          {/* 인쇄 옵션 토글 */}
+          <div className="flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto" data-tour="tracing-toggle">
+            <Switch 
+              id="tracing-mode" 
+              checked={showTracingText}
+              onCheckedChange={toggleTracingText}
+              disabled={menuItems.length === 0}
+            />
+            <Label htmlFor="tracing-mode" className={`cursor-pointer font-medium text-sm ${menuItems.length === 0 ? 'text-slate-400' : ''}`}>
+              따라쓰기 (2페이지 분리) 켜기
+            </Label>
+          </div>
         </div>
         
-        {/* 인쇄 옵션 토글 */}
-        <div className="flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto" data-tour="tracing-toggle">
-          <Switch 
-            id="tracing-mode" 
-            checked={showTracingText}
-            onCheckedChange={toggleTracingText}
-            disabled={menuItems.length === 0}
-          />
-          <Label htmlFor="tracing-mode" className={`cursor-pointer font-medium text-sm ${menuItems.length === 0 ? 'text-slate-400' : ''}`}>
-            따라쓰기 (2페이지 분리) 켜기
-          </Label>
+        {/* 메뉴명 수정 안내 */}
+        <div className="text-indigo-600 font-medium text-xs bg-indigo-50 border border-indigo-200 rounded-md p-2.5">
+          💡 메뉴명을 클릭하면 따라쓰기와 스티커에 출력될 이름을 수정할 수 있습니다.
         </div>
       </CardHeader>
 
