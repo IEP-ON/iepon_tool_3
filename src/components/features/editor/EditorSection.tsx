@@ -10,10 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { RefreshCw, Search, Sparkles, Loader2, Eye, EyeOff } from 'lucide-react';
+import { RefreshCw, Search, Loader2, Eye, EyeOff, Upload } from 'lucide-react';
 import { getDefaultImage } from '@/lib/utils/default-images';
 import { MenuItem } from '@/types/database';
 import { supabase } from '@/lib/supabase/client';
+import imageCompression from 'browser-image-compression';
 
 export function EditorSection() {
   const { menuItems, updateMenuItemImage, isLoading, showTracingText, toggleTracingText, toggleMenuItemVisibility, updateMenuItemName } = useMenuStore();
@@ -22,13 +23,14 @@ export function EditorSection() {
   // Dialog States
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
   // Editing Name State
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const loadedMenusRef = useRef<Set<string>>(new Set());
   
   // 자동 이미지 로딩 (Tier 1 -> Tier 2 DB 캐시 -> 수동)
@@ -52,7 +54,7 @@ export function EditorSection() {
               .from('tool3_menu_images')
               .select('image_url, source')
               .eq('refined_name', item.refined_name)
-              .order('created_at', { ascending: false })
+              .order('usage_count', { ascending: false })
               .limit(1);
               
             if (!error && data && data.length > 0) {
@@ -97,15 +99,29 @@ export function EditorSection() {
     setEditingItemId(null);
   };
 
-  // DB에 생성/검색한 이미지 URL 캐싱
+  // DB에 이미지 URL 캐싱 (동일 이미지가 이미 있으면 usage_count 증가, 없으면 새로 insert)
   const saveToDbCache = async (refinedName: string, originalName: string, imageUrl: string, source: string) => {
     try {
-      await supabase.from('tool3_menu_images').insert({
-        refined_name: refinedName,
-        original_name: originalName,
-        image_url: imageUrl,
-        source: source
-      });
+      // 1. 동일 refined_name + image_url 조합이 이미 DB에 있는지 확인
+      const { data: existing } = await supabase
+        .from('tool3_menu_images')
+        .select('id')
+        .eq('refined_name', refinedName)
+        .eq('image_url', imageUrl)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        // 2. 이미 있으면 usage_count 증가 (RPC 함수 사용 - RLS UPDATE 차단 우회)
+        await supabase.rpc('increment_usage_count', { target_image_url: imageUrl });
+      } else {
+        // 3. 없으면 새로 insert (usage_count 기본값 1)
+        await supabase.from('tool3_menu_images').insert({
+          refined_name: refinedName,
+          original_name: originalName,
+          image_url: imageUrl,
+          source: source
+        });
+      }
     } catch (e) {
       console.error('Failed to save to DB cache:', e);
     }
@@ -124,7 +140,7 @@ export function EditorSection() {
         toast.success(`${data.urls.length}개의 이미지를 찾았습니다.`);
       } else {
         setSearchResults([]);
-        toast.error('검색 결과가 없습니다. 다른 검색어나 AI 생성을 시도해보세요.');
+        toast.error('검색 결과가 없습니다. 다른 검색어를 시도하거나 직접 업로드해보세요.');
       }
     } catch (error) {
       toast.error('이미지 검색 중 오류가 발생했습니다.');
