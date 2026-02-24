@@ -1,6 +1,5 @@
 'use client';
 
-import Image from "next/image";
 import { SearchSection } from '@/components/features/search/SearchSection';
 import { EditorSection } from '@/components/features/editor/EditorSection';
 import { PrintLayout } from '@/components/features/print/PrintLayout';
@@ -32,7 +31,7 @@ export default function Home() {
             </div>
             
             <div data-tour="print-button">
-              <Button onClick={handlePrint} size="lg" className="shadow-md shrink-0">
+              <Button onClick={handlePrint} size="lg" className="shadow-md shrink-0" disabled={menuItems.length === 0}>
                 <PrinterIcon className="w-5 h-5 mr-2" />
                 A4 인쇄하기
               </Button>

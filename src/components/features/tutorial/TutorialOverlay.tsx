@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Step } from 'react-joyride';
+import { CallBackProps, Step } from 'react-joyride';
 
 // 클라이언트 사이드에서만 렌더링되도록 dynamic import
 const Joyride = dynamic(() => import('react-joyride'), { ssr: false });
@@ -73,7 +73,7 @@ export function TutorialOverlay() {
     }
   }, []);
 
-  const handleJoyrideCallback = (data: any) => {
+  const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
     // finished 또는 skipped 상태가 되면 localStorage에 저장하고 종료
     if (['finished', 'skipped'].includes(status)) {
