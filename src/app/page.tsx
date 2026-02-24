@@ -4,6 +4,7 @@ import Image from "next/image";
 import { SearchSection } from '@/components/features/search/SearchSection';
 import { EditorSection } from '@/components/features/editor/EditorSection';
 import { PrintLayout } from '@/components/features/print/PrintLayout';
+import { OnboardingTutorial } from '@/components/features/tutorial/OnboardingTutorial';
 import { Button } from '@/components/ui/button';
 import { useMenuStore } from '@/store/useMenuStore';
 import { PrinterIcon } from 'lucide-react';
@@ -19,6 +20,7 @@ export default function Home() {
   return (
     <>
       <Toaster position="top-center" richColors />
+      <OnboardingTutorial />
       
       {/* 화면용 UI (인쇄 시 숨김 - print:hidden 추가) */}
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black print:hidden">
@@ -26,11 +28,11 @@ export default function Home() {
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6 w-full">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">오늘 급식판 만들기</h1>
-              <p className="text-slate-500 mt-2">나이스 급식 메뉴로 나만의 A4 학습지를 만들어보세요.</p>
+              <p className="text-slate-500 mt-2">나이스 급식 메뉴로 나만의 A5 학습지를 만들어보세요.</p>
             </div>
             
             {menuItems.length > 0 && (
-              <Button onClick={handlePrint} size="lg" className="shadow-md shrink-0">
+              <Button onClick={handlePrint} size="lg" className="tutorial-print-button shadow-md shrink-0">
                 <PrinterIcon className="w-5 h-5 mr-2" />
                 A4 인쇄하기
               </Button>
@@ -38,8 +40,12 @@ export default function Home() {
           </header>
 
           <div className="w-full space-y-8 mt-8">
-            <SearchSection />
-            <EditorSection />
+            <div className="tutorial-search-section w-full">
+              <SearchSection />
+            </div>
+            <div className="tutorial-editor-section w-full">
+              <EditorSection />
+            </div>
           </div>
           
           <footer className="pt-8 mt-8 border-t w-full text-center text-sm text-slate-400">

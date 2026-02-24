@@ -239,7 +239,7 @@ export function EditorSection() {
         </div>
         
         {/* 인쇄 옵션 토글 */}
-        <div className="flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto">
+        <div className="tutorial-tracing-toggle flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto">
           <Switch 
             id="tracing-mode" 
             checked={showTracingText}
