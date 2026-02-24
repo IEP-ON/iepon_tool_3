@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 피드 4 - 따라쓰기 학습지</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
+        .feed-container { width: 1080px; height: 1080px; background: #fdf2f8; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
+        .header { text-align: center; margin-bottom: 50px; z-index: 10; }
+        .step-badge { background: #db2777; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 24px; display: inline-block; margin-bottom: 20px; }
+        .title { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0 0 15px 0; line-height: 1.2; }
+        .highlight { color: #db2777; }
+        .subtitle { font-size: 32px; font-weight: 500; color: #64748b; margin: 0; }
+        
+        .tracing-mockup { width: 850px; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 30px; position: relative; }
+        
+        .toggle-btn { position: absolute; top: -30px; right: 50px; background: white; border: 4px solid #db2777; border-radius: 50px; padding: 10px 20px; font-size: 24px; font-weight: bold; color: #db2777; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 15px -3px rgba(219, 39, 119, 0.2); }
+        .toggle-track { width: 60px; height: 34px; background: #db2777; border-radius: 20px; position: relative; }
+        .toggle-thumb { width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; right: 4px; top: 4px; }
+        
+        .tracing-row { display: flex; align-items: center; gap: 40px; border-bottom: 3px dashed #e2e8f0; padding-bottom: 25px; }
+        
+        .menu-preview { display: flex; flex-direction: column; align-items: center; width: 150px; flex-shrink: 0; text-align: center; gap: 15px; }
+        .menu-img { width: 120px; height: 120px; border-radius: 50%; background: #f8fafc; border: 4px solid #cbd5e1; display: flex; justify-content: center; align-items: center; font-size: 60px; margin: 0 auto; }
+        .menu-text { font-size: 28px; font-weight: 800; color: #334155; }
+        
+        .writing-area { display: flex; gap: 20px; flex-wrap: wrap; }
+        .writing-box { width: 70px; height: 70px; border: 3px solid #94a3b8; border-radius: 12px; display: flex; justify-content: center; align-items: center; position: relative; font-size: 40px; font-weight: 700; color: #cbd5e1; }
+        .writing-box::before { content: ''; position: absolute; width: 100%; height: 2px; background: #cbd5e1; border-top: 2px dashed #94a3b8; }
+        .writing-box::after { content: ''; position: absolute; height: 100%; width: 2px; background: #cbd5e1; border-left: 2px dashed #94a3b8; }
+        .writing-box.strong { color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        
+        <div class="header">
+            <div class="step-badge">기능 3. 글씨 쓰기 학습지</div>
+            <h1 class="title">토글 한 번에<br><span class="highlight">따라쓰기 학습지</span> 뚝딱!</h1>
+            <p class="subtitle">오늘 먹을 반찬 이름, 미리 연습해 볼까요?</p>
+        </div>
+        
+        <div class="tracing-mockup">
+            <div class="toggle-btn">
+                학습지 포함 켜기
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </div>
+            
+            <div class="tracing-row">
+                <div class="menu-preview">
+                    <div class="menu-img">🍎</div>
+                    <div class="menu-text">사과</div>
+                </div>
+                <div class="writing-area">
+                    <div class="writing-box strong">사</div>
+                    <div class="writing-box strong">과</div>
+                    <div class="writing-box">사</div>
+                    <div class="writing-box">과</div>
+                    <div class="writing-box">사</div>
+                    <div class="writing-box">과</div>
+                </div>
+            </div>
+            
+            <div class="tracing-row" style="border:none;">
+                <div class="menu-preview">
+                    <div class="menu-img">🍛</div>
+                    <div class="menu-text">카레</div>
+                </div>
+                <div class="writing-area">
+                    <div class="writing-box strong">카</div>
+                    <div class="writing-box strong">레</div>
+                    <div class="writing-box">카</div>
+                    <div class="writing-box">레</div>
+                    <div class="writing-box">카</div>
+                    <div class="writing-box">레</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

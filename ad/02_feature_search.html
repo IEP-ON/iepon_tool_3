@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 피드 2 - 메뉴 검색 기능</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
+        .feed-container { width: 1080px; height: 1080px; background: white; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
+        .header { text-align: center; margin-bottom: 60px; }
+        .step-badge { background: #10b981; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 24px; display: inline-block; margin-bottom: 20px; }
+        .title { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0 0 15px 0; line-height: 1.2; }
+        .highlight { color: #10b981; }
+        .subtitle { font-size: 32px; font-weight: 500; color: #64748b; margin: 0; }
+        
+        .ui-mockup { width: 850px; background: #f8fafc; border-radius: 24px; border: 2px solid #e2e8f0; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 15px; }
+        .label { font-size: 28px; font-weight: 700; color: #334155; }
+        .input-box { width: 100%; height: 80px; background: white; border: 2px solid #cbd5e1; border-radius: 16px; display: flex; align-items: center; padding: 0 30px; box-sizing: border-box; font-size: 32px; color: #94a3b8; }
+        .input-box.active { border-color: #10b981; color: #0f172a; font-weight: 600; }
+        
+        .btn-large { width: 100%; height: 90px; background: #10b981; color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; margin-top: 20px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); }
+        
+        .floating-icon { position: absolute; font-size: 120px; right: 80px; top: 150px; transform: rotate(15deg); opacity: 0.8; }
+        .floating-icon-2 { position: absolute; font-size: 100px; left: 80px; bottom: 150px; transform: rotate(-10deg); opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="floating-icon">🏫</div>
+        <div class="floating-icon-2">📅</div>
+        
+        <div class="header">
+            <div class="step-badge">기능 1. NEIS API 연동</div>
+            <h1 class="title">학교만 검색하면<br><span class="highlight">자동으로</span> 식단표 스르륵!</h1>
+            <p class="subtitle">나이스 급식 정보가 클릭 한 번에 쏙!</p>
+        </div>
+        
+        <div class="ui-mockup">
+            <div class="input-group">
+                <div class="label">학교 검색</div>
+                <div class="input-box active">서울행복초등학교</div>
+            </div>
+            
+            <div class="input-group">
+                <div class="label">날짜 선택</div>
+                <div class="input-box active">2026년 3월 2일 (월)</div>
+            </div>
+            
+            <div class="btn-large">메뉴 불러오기 🔍</div>
+        </div>
+    </div>
+</body>
+</html>

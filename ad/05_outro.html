@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 피드 5 - 마지막 안내</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
+        .feed-container { width: 1080px; height: 1080px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); color: white; text-align: center; }
+        
+        .deco-circle { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: #4f46e5; opacity: 0.2; top: -200px; left: -200px; filter: blur(60px); }
+        .deco-circle-2 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: #10b981; opacity: 0.15; bottom: -100px; right: -100px; filter: blur(50px); }
+        
+        .icon-box { font-size: 100px; margin-bottom: 40px; text-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 10; }
+        .title { font-size: 76px; font-weight: 900; margin: 0 0 30px 0; line-height: 1.3; z-index: 10; word-break: keep-all; }
+        .highlight { color: #818cf8; }
+        
+        .url-box { background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 30px 60px; border-radius: 20px; font-size: 48px; font-weight: 700; color: #f8fafc; margin: 50px 0; display: inline-flex; align-items: center; gap: 20px; z-index: 10; }
+        .url-icon { color: #818cf8; }
+        
+        .footer-text { font-size: 32px; font-weight: 500; color: #94a3b8; z-index: 10; }
+        .btn-large { background: #818cf8; color: white; padding: 25px 60px; border-radius: 50px; font-size: 36px; font-weight: 800; margin-top: 40px; z-index: 10; box-shadow: 0 10px 25px rgba(129, 140, 248, 0.4); border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="icon-box">🖨️✨</div>
+        
+        <h1 class="title">지금 바로<br><span class="highlight">선생님 반 급식판</span>을<br>만들어보세요!</h1>
+        
+        <div class="url-box">
+            <span class="url-icon">🔗</span> iep-food.vercel.app
+        </div>
+        
+        <p class="footer-text">특수교육 보조도구 IEP-ON</p>
+        
+        <button class="btn-large">프로필 링크에서 바로가기</button>
+    </div>
+</body>
+</html>

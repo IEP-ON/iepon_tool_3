@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 피드 3 - 이미지 매핑</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f1f5f9; font-family: 'Pretendard', sans-serif; }
+        .feed-container { width: 1080px; height: 1080px; background: #fffbeb; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
+        .header { text-align: center; margin-bottom: 50px; }
+        .step-badge { background: #f59e0b; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 24px; display: inline-block; margin-bottom: 20px; }
+        .title { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0 0 15px 0; line-height: 1.2; }
+        .highlight { color: #f59e0b; }
+        .subtitle { font-size: 32px; font-weight: 500; color: #64748b; margin: 0; }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 850px; }
+        
+        .menu-card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 2px solid #fde68a; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }
+        .img-box { width: 100%; aspect-ratio: 1; background: #f1f5f9; border-radius: 16px; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 80px; position: relative; overflow: hidden; }
+        
+        .img-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; opacity: 0; transition: opacity 0.3s; }
+        .menu-card:hover .img-overlay { opacity: 1; }
+        
+        .menu-name { font-size: 28px; font-weight: 800; color: #334155; width: 100%; text-align: center; padding: 10px; background: #f8fafc; border-radius: 12px; }
+        
+        /* 돋보기 아이콘 및 웹 검색 강조 */
+        .search-tooltip { position: absolute; background: #3b82f6; color: white; padding: 15px 25px; border-radius: 20px; font-size: 24px; font-weight: bold; top: -30px; right: -40px; transform: rotate(10deg); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4); animation: float 2s ease-in-out infinite; }
+        .search-tooltip::after { content: ''; position: absolute; bottom: -10px; left: 20px; border-width: 10px 10px 0; border-style: solid; border-color: #3b82f6 transparent transparent transparent; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(10deg); }
+            50% { transform: translateY(-10px) rotate(12deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        
+        <div class="header">
+            <div class="step-badge">기능 2. 스마트 이미지 매칭</div>
+            <h1 class="title"><span class="highlight">웹 검색</span>으로<br>마음에 쏙 드는 사진 찾기</h1>
+            <p class="subtitle">사진이 없거나 맘에 안 들면? 교체 버튼 꾹!</p>
+        </div>
+        
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="search-tooltip">클릭해서 교체! ✨</div>
+                <div class="menu-name">친환경 쌀밥</div>
+                <div class="img-box">🍚
+                    <div class="img-overlay">🔄 교체하기</div>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-name">돼지고기 김치찌개</div>
+                <div class="img-box" style="background: #fee2e2;">🥘
+                    <div class="img-overlay">🔄 교체하기</div>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-name">수제 돈까스</div>
+                <div class="img-box" style="background: #fef3c7;">🥩
+                    <div class="img-overlay">🔄 교체하기</div>
+                </div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-name">깍두기</div>
+                <div class="img-box">🥬
+                    <div class="img-overlay">🔄 교체하기</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
