@@ -75,7 +75,7 @@ export function SearchSection() {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" data-tour="search-section">
       <CardHeader>
         <CardTitle>급식판 만들기</CardTitle>
         <CardDescription>학교를 검색하고 날짜를 선택하여 급식 메뉴를 불러오세요.</CardDescription>

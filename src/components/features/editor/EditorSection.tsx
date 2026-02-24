@@ -228,10 +228,8 @@ export function EditorSection() {
     );
   }
 
-  if (menuItems.length === 0) return null;
-
   return (
-    <Card className="w-full">
+    <Card className="w-full" data-tour="editor-section">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <CardTitle>메뉴 편집 및 확인</CardTitle>
@@ -239,25 +237,37 @@ export function EditorSection() {
         </div>
         
         {/* 인쇄 옵션 토글 */}
-        <div className="tutorial-tracing-toggle flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto">
+        <div className="flex items-center space-x-2 border p-3 rounded-md bg-slate-50 w-full sm:w-auto" data-tour="tracing-toggle">
           <Switch 
             id="tracing-mode" 
             checked={showTracingText}
             onCheckedChange={toggleTracingText}
+            disabled={menuItems.length === 0}
           />
-          <Label htmlFor="tracing-mode" className="cursor-pointer font-medium text-sm">
+          <Label htmlFor="tracing-mode" className={`cursor-pointer font-medium text-sm ${menuItems.length === 0 ? 'text-slate-400' : ''}`}>
             따라쓰기 (2페이지 분리) 켜기
           </Label>
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {menuItems.map((item) => (
-            <div 
-              key={item.id} 
-              className={`border rounded-lg p-3 flex flex-col items-center gap-2 hover:border-slate-400 transition-colors bg-white shadow-sm relative group ${item.isHidden ? 'opacity-40 grayscale-[50%]' : ''}`}
-            >
+        {menuItems.length === 0 ? (
+          <div 
+            className="w-full min-h-[200px] border-2 border-dashed rounded-lg bg-slate-50 flex flex-col items-center justify-center text-slate-400 p-8 text-center"
+            data-tour="image-edit"
+          >
+            <Search className="w-10 h-10 mb-3 opacity-20" />
+            <p className="font-medium text-slate-600">아직 불러온 급식 메뉴가 없습니다.</p>
+            <p className="text-sm mt-1">위에서 학교와 날짜를 검색해 메뉴를 불러와 주세요.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {menuItems.map((item, index) => (
+              <div 
+                key={item.id} 
+                className={`border rounded-lg p-3 flex flex-col items-center gap-2 hover:border-slate-400 transition-colors bg-white shadow-sm relative group ${item.isHidden ? 'opacity-40 grayscale-[50%]' : ''}`}
+                data-tour={index === 0 ? "image-edit" : undefined}
+              >
               {/* 눈 아이콘 (숨김/보임 토글) */}
               <button
                 onClick={() => toggleMenuItemVisibility(item.id)}
@@ -327,7 +337,8 @@ export function EditorSection() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </CardContent>
 
       {/* 이미지 교체 다이얼로그 */}
