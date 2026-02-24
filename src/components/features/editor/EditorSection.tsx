@@ -299,6 +299,11 @@ export function EditorSection() {
                     src={item.image.image_url} 
                     alt={item.refined_name} 
                     className="w-full h-full object-contain p-2"
+                    onError={(e) => {
+                      // 이미지 로딩 실패 시 (만료된 URL, 404 등) 이미지 제거하여 "검색" 아이콘 표시
+                      e.currentTarget.style.display = 'none';
+                      updateMenuItemImage(item.id, '', 'tier1_preset');
+                    }}
                   />
                 ) : (
                   <div className="flex flex-col items-center text-slate-400">
