@@ -133,31 +133,58 @@ export function EditorSection() {
     }
   };
 
-  const handleGenerateAI = async () => {
-    if (!searchQuery.trim() || !activeItem) return;
-    
-    setIsGenerating(true);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeItem) return;
+
+    setIsUploading(true);
     try {
-      const res = await fetch('/api/images/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: searchQuery })
-      });
+      // 1. 클라이언트 사이드 이미지 리사이징 및 압축 (Supabase 용량 절약)
+      const options = {
+        maxSizeMB: 0.5, // 최대 500KB
+        maxWidthOrHeight: 800, // 최대 해상도 800px
+        useWebWorker: true,
+      };
       
-      const data = await res.json();
+      const compressedFile = await imageCompression(file, options);
       
-      if (data.url) {
-        updateMenuItemImage(activeItem.id, data.url, 'tier4_openai');
-        saveToDbCache(activeItem.refined_name, activeItem.original_name, data.url, 'tier4_openai');
-        toast.success('AI 이미지가 성공적으로 생성되었습니다!');
-        setActiveItem(null);
-      } else {
-        toast.error(data.error || 'AI 이미지 생성에 실패했습니다.');
-      }
+      // 2. 고유 파일명 생성
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      // 3. Supabase Storage 에 업로드 (사전에 'menu-images' 버킷이 필요함)
+      const { error: uploadError } = await supabase.storage
+        .from('menu-images')
+        .upload(filePath, compressedFile, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      // 4. 업로드된 파일의 Public URL 가져오기
+      const { data } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(filePath);
+
+      const publicUrl = data.publicUrl;
+
+      // 5. 로컬 상태 업데이트 및 DB 캐시 저장
+      updateMenuItemImage(activeItem.id, publicUrl, 'user_upload');
+      saveToDbCache(activeItem.refined_name, activeItem.original_name, publicUrl, 'user_upload');
+      
+      toast.success('이미지가 성공적으로 업로드되었습니다!');
+      setActiveItem(null);
     } catch (error) {
-      toast.error('AI 이미지 생성 중 오류가 발생했습니다.');
+      console.error('Upload error:', error);
+      toast.error('이미지 업로드 중 오류가 발생했습니다.');
     } finally {
-      setIsGenerating(false);
+      setIsUploading(false);
+      // input 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -303,13 +330,24 @@ export function EditorSection() {
                   {isSearching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                   웹 검색 (무료)
                 </Button>
-                <Button onClick={handleGenerateAI} disabled={isGenerating} className="bg-purple-600 hover:bg-purple-700 text-white">
-                  {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                  AI 생성
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                />
+                <Button 
+                  onClick={() => fileInputRef.current?.click()} 
+                  disabled={isUploading} 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  {isUploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                  직접 업로드
                 </Button>
               </div>
               <p className="text-xs text-slate-500">
-                원하는 이미지가 안 나오면 검색어를 단순하게 수정해보세요. (예: 수제돈까스 → 돈까스)
+                원하는 이미지가 안 나오면 검색어를 단순하게 수정해보세요. 직접 사진을 찍어 올릴 수도 있습니다.
               </p>
             </div>
             
@@ -334,7 +372,7 @@ export function EditorSection() {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-2">
                   <Search className="w-8 h-8 opacity-50" />
-                  <p className="text-sm">검색 버튼을 눌러 이미지를 찾거나 AI로 생성하세요.</p>
+                  <p className="text-sm">검색 버튼을 눌러 이미지를 찾거나 직접 업로드하세요.</p>
                 </div>
               )}
             </div>

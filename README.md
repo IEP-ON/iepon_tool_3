@@ -22,7 +22,6 @@ NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEIS_API_KEY=your-neis-api-key
 PIXABAY_API_KEY=your-pixabay-api-key
-OPENAI_API_KEY=your-openai-api-key
 ```
 
 ## 🛠️ Supabase DB 설정
