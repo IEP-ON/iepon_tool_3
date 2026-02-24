@@ -152,12 +152,8 @@ export function PrintLayout() {
         >
           {/* 90도 회전된 내부 컨테이너 (실제 내용은 가로 레이아웃 w-297 h-210) */}
           <div 
-            className="absolute top-0 left-full origin-top-left rotate-90 w-[297mm] h-[210mm] flex flex-col p-8 box-border bg-white"
+            className="absolute top-0 left-full origin-top-left rotate-90 w-[297mm] h-[210mm] flex flex-col p-6 box-border bg-white"
           >
-            <h1 className="text-2xl font-black text-slate-700 mb-6 text-center tracking-tight border-b-4 border-slate-200 pb-3 inline-block mx-auto shrink-0">
-              오늘의 메뉴 따라 쓰기 {tracingChunks.length > 1 ? `(${pageIndex + 1}/${tracingChunks.length})` : ''}
-            </h1>
-
             <div className="flex flex-col gap-0 flex-1 justify-between pb-2">
               {chunk.map((item) => {
                 const chars = item.refined_name.split('');
